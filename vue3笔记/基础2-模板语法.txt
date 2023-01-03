@@ -1,0 +1,51 @@
+# 文本插值
+双花括号{{val}}把实例的变量val，作为纯文本插入到dom:
+<div>{{val}}</div>
+
+# 原始HTML
+若val是html代码，要渲染到dom中，不应用文本插值，而应用v-html指令：
+<div v-html="val"></div>
+val的内容会渲染为该div的子节点。
+感觉没啥用。
+
+# 指令
+template里写在dom元素属性列中的 v-.. 即为指令，实现dom的响应式绑定和渲染效果。
+有的指令无参数，指令="表达式" 如v-html="val"
+有的指令有参数，指令:参数="表达式" 如v-bind:key="val" v-on:event="val"
+指令名字就是v-后边的名字，如html指令、bind指令、on指令
+
+# bind
+<div v-bind:k="v"> = <div :k="v">
+把表达式v的值响应式绑定到属性k上，当表达式值改变时，自动更新dom属性
+若 v==null || v==undefined，属性k会移除
+
+# 无参bind
+设 attrs={id:"ding", class:'classbi', name:'xin'},
+无参bind，把对象键值对，作为属性键值对，一起绑到dom元素上，非常方便
+<div v-bind="attrs"> = <div :="attrs">
+效果：<div class="classbi" id="ding" name="xin">
+
+# 沙盒表达式
+绑定即表达式求值，文本插值语法 {{...}}、属性绑定语法 "..." 里面都是一个js表达式，不能是语句。
+这个表达式是一个沙盒，可使用本组件作用域中的变量和函数，还可使用以下规定的对象：
+`Infinity,undefined,NaN,isFinite,isNaN,parseFloat,parseInt,decodeURI,
+decodeURIComponent,encodeURI,encodeURIComponent,Math,Number,Date,Array,
+Object,Boolean,String,RegExp,Map,Set,JSON,Intl,BigInt`
+但这里面没有window，要访问window的属性，需要用app.config.globalProperties将其暴露到组件的作用域中。
+
+# 动态参数
+不仅值是动态表达式，参数名字也可以是动态表达式
+在bind中:
+  <div v-bind:[key]="val"> = <div :[key]="val">
+on指令也一样:
+  <div v-on:[event]="dosth"> = <div @[event]="dosth">
+即[...]也是沙盒，里面放着表达式，vue中共有三种表达式沙盒：[] "" {{}}
+[]中应为属性名字符串。
+不应包含大写字母，大写字母都会转为小写。
+属性名中可以有特殊字符如:_-
+若属性名为null会移除该绑定。
+有些名字无法绑定，如'key'
+
+# 修饰符
+v-on、v-model指令可有修饰符，参数后面以点号开头的修饰符，起特殊控制作用
+<form v-on:submit.prevent="dosth"> 

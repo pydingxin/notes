@@ -1,0 +1,48 @@
+# 声明响应式状态
+export default {
+    data() {
+      return {
+        count: 1
+      }
+    },
+}  
+响应式状态声明在data中，暴露在该实例的this作用域。
+只能声明不能添加，否则不会触发响应式更新。
+变量名不能用$和_前缀。
+
+# 声明方法
+export default {
+    methods: {
+      increment() {
+        this.count++
+      },
+    }
+}
+方法声明在methods中，方法内部自动绑定this作用域，可用this访问实例变量。
+方法不能用箭头函数，否则会失去this绑定。
+
+# dom更新时机
+dom是周期式更新的，这个周期叫tick。
+响应式状态改变后，dom不会立即更新，而是被缓存，等下一个tick更新。
+所以在一个tick周期内多次改变状态，只能更新为最后一次的值。
+
+要在方法中访问更新后的dom内容，必须等到下个tick周期。
+这需要用nextTick函数，注册异步函数，或用async/await语法。
+export default {
+    methods: {
+      increment() {
+        this.count++
+        nextTick(() =>{
+            //注册一个异步函数，访问更新后的dom
+        })
+      },
+      async increment2() {
+        this.count++
+        await nextTick()
+        //访问更新后的dom
+      },
+    }
+}
+
+# 深层响应性
+更改深层次的对象或数组，也能产生响应。

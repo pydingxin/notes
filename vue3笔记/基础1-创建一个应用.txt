@@ -1,0 +1,34 @@
+# 导入根组件
+import App from './App.vue' 
+
+# 创建应用实例
+import {createApp} from 'vue'
+const app = createApp(App)
+
+这里App就是根组件export的那个对象，等于
+createApp({
+  data() {
+    return {
+     ...
+    }
+  }
+})
+
+# 应用渲染到容器
+app.mount("#app")
+
+# 应用配置
+全局变量/函数
+app.config.globalProperties.key = val;
+这可以把key暴露到所有组件的作用域中
+
+# 全局组件
+import组件，然后app.use().use()...mount()
+
+# 多个应用实例
+同时使用多个应用实例，挂到多个容器上
+const app1 = createApp({})
+app1.mount('#container-1')
+
+const app2 = createApp({})
+app2.mount('#container-2')
