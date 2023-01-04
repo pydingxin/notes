@@ -1,0 +1,66 @@
+v-for指令实现列表渲染
+
+# 迭代数组
+    data() {
+        return {
+            items: [...]
+        }
+    }
+    <div v-for="item in items">
+    <div v-for="(item, index) in items">
+in可以换成of，但of不能用index。
+支持嵌套。
+
+# 迭代对象
+data() {
+    return {
+      obj: {
+        key1:"val1",
+        key2:"val2",
+      }
+    }
+}
+<div v-for="val in obj">
+<div v-for="(val,key) in obj">
+<div v-for="(val,key,index) in obj">
+
+# 迭代范围
+<div v-for="k in 8"> {{k}}</div>
+<div v-for="k in n"> {{k}}</div>    //响应式n
+
+# 透明父元素
+多元素列表渲染
+<template v-for="k in 10"> 
+  <p>{{k}}</p>
+  <p>------------------------</p>
+</template>
+
+# if与for
+这两个指令若要配合，如下行不通，因为if优先级高，会先计算。
+<div v-for="item in items" v-if="item.show"> {{item.content}}</div>
+要把这两个指令分开:
+<template v-for="item in items">
+    <div v-if="item.show"> {{item.content}}</div>
+</template>
+
+# key
+key是节点的“身份证号”，是特殊的bind属性。
+         <div v-for="item in items" :key="item.id">
+    <template v-for="item in items" :key="item.id">
+在列表局部变动时，比如排序、插入、删除，根据key来复用节点。
+这可提高列表渲染性能，所以应当尽可能在列表渲染时使用key。
+
+# 组件
+<Mycomponent v-for="(item,idx) in items" :item="item" :idx="idx">
+让组件接收item，必须再绑一次属性，然后用props获取属性。
+
+# 数组变化
+## 直接替换
+直接给数组赋值，可以被检测到，从而响应式更新。
+## 变更方法
+push/pop/shift/unshift/splice/sort/reverse
+调用这7个改变原数组的方法，也会被检测到变化，从而更新。
+
+# 展示过滤或排序结果
+若不想改变原数组，可以用计算属性或方法结果，来进行列表渲染。
+注：[...arr]可以产生数组arr的浅拷贝副本，对一维数组有用。
