@@ -2,6 +2,60 @@
 对class和style的bind有专门强化。
 
 # class
-绑定class就是
+即在class属性中添加/删除类名，有绑定对象/数组两种方式。
+
 ## 绑定对象
-给class属性绑定一个对象，对象的k是类名，v是布尔状态，以真值添加类。
+给class属性绑定一个对象，即:class="{类名1:布尔1, 类名2:布尔2...}"，真值决定类名存在。
+data(){
+    return{
+        isActive: true,
+        hasError: false,
+    }
+}
+<div :class="{active:isActive, text-danger:hasError}">
+得到
+<div class="active">
+
+------------------------------------------
+
+若有多个类，应直接整到一个对象里，避免给真值命名
+data(){
+    return {
+        divClassObj:{
+            active:true,
+            'text-danger':false,    //用classobj['text-danger']修改真值。
+        }
+    }
+}
+<div :class="divClassObj">
+效果相同，且更简洁，应以此为准。
+若有更复杂的逻辑，比如切换类名，应把这个对象作为计算属性。
+
+## 绑定数组
+这就没意思了，跟绑定对象效果一样。
+less is more，没有学的必要。
+
+## 在组件上使用
+和其他属性的绑定不同，class和style的绑定能与原值合并:
+<div class="a" :class="b"> → <div class="a bval">
+而如下的绑定不生效：
+<div hello="a" :hello="b"> → <div hello="a">
+
+------------------------------------------
+
+如果按照上述方式，给组件绑定类。
+如果是单根组件，则合并到根元素的class上。
+如果是多根组件，可以用如下方式选择合并到某个元素上：
+    <p :class="$attrs.class">hello</p>
+    <p>world</p>
+给组件绑定样式类过于花哨，似乎是为了理论完备，一般不会用到这种功能。
+
+# style
+这个绑定内联样式是小众需求，用class就能修改样式，功能已经很强了。
+但这部分也很有必要，用class改样式不能超出预定义。
+如果有类似场景，比如让用户手动选择颜色或字号，可以考虑使用。
+
+
+
+
+
