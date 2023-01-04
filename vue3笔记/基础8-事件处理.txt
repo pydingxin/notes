@@ -1,0 +1,65 @@
+# 监听事件
+<div v-on:eventName="method1">
+<div @eventName="method2">
+用on指令监听事件，就是绑上事件监听器，缩写为@
+eventName有很多【见https://www.runoob.com/jsref/dom-obj-event.html】
+如鼠标事件、键盘事件、表单事件，vue最常用的就是鼠标点击、表单改变事件。
+
+# 处理事件
+methods:{
+    method0(){ ... },
+    method1(event){ ... },
+    method2(msg){ ... },
+    method3(msg,event){ ... },
+}
+
+<div @click="method0">                  // 方法事件，即沙盒里只写一个方法名
+<div @click="method1">                  // 方法事件，默认带一个原生事件参数
+<div @click="method2('arg')">           // 内联事件，即把语句直接写到沙盒里
+<div @click="method3('arg',$event)">    // 内联事件，手动传入$event
+
+# 事件修饰符
+控制事件处理
+    @event.stop     // event.stopPropagation()
+    @event.prevent  // event.preventDefault()
+    @event.once     // 只执行一次
+    @event.self     // 自身事件，不来自子元素
+    @scroll.passive // 滚屏优化
+
+<input @focus.once="showTip">   //还挺有用的
+
+# 按键修饰符
+@event.keyname
+keyname应为kebab-case格式，常用按键的别名：
+    .enter
+    .tab
+    .delete
+    .esc
+    .space
+    .up
+    .down
+    .left
+    .right
+
+系统按键，按住时生效：
+    .ctrl
+    .shift
+    .alt
+    .meta
+
+<input @keydown.down="method0">      // 按↓
+<input @click.ctrl="method0">        // 按住ctrl点左键
+<input @keydown.ctrl.down="method0"> // 按住ctrl按↓
+
+# .exact修饰符
+精确要求，不能有其他按键操作
+<button @click="fun">           // 点击时，可以按住其他键
+<button @click.exact="fun">     // 点击时，不能按住其他键
+<button @click.ctrl.exact="fun"> //点击时，按且仅按住ctrl
+
+# 鼠标按键修饰符
+    .left
+    .middle
+    .right
+修饰鼠标事件，规定点哪个键。
+鼠标事件不能配合.exact修饰符，左击事件按住右键左击也能触发。
