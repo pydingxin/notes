@@ -1,0 +1,28 @@
+条件渲染即用真值显示元素。
+使用四个渲染指令即可实现：if/else/else-if/show
+
+# v-if
+<p v-if="see">  p1</p>
+
+# v-else
+<p v-if="see">  p1</p>
+<p v-else>  p2</p>
+
+# v-else-if
+<p v-if="see=='p1'">  p1</p>
+<p v-else-if="see=='p2'"> p2</p>
+<p v-else-if="see=='p3'"> p3</p>
+<p v-else>  default</p>
+
+# 透明父节点
+<template>是透明元素，不会被渲染，可以作为父节点，包裹多个节点进行条件渲染
+<template v-if="see">
+    ....
+</template>
+
+# v-show
+<p v-show="see">  p1</p>
+if/else/else-if 这三个指令体现非此即彼的关系，只有一个被渲染，切换时会销毁重建。
+show指令总是被渲染到dom上，只是切换display来显示，切换开销小。
+选哪个看切换频率，经常切换的用show，可以减小开销。
+show指令不能配合template。
