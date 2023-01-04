@@ -1,0 +1,71 @@
+model指令的表单绑定是双向传递 
+<input v-model="msg"> vue将其转为：
+<input :value="msg"  @input="event=>msg=event.target.value">
+:value 是msg → 输入框
+@input 是输入框 → msg
+
+具体转换有些区别：
+输入框 <input> <textarea> 监听input事件
+选择框 <input type="radio"> <input type="checkbox"> <select> 监听change事件，可配合label。
+
+# 基本用法
+
+## 文本
+<input v-model="msg" />
+msg是字符串
+
+## 多行文本
+<textarea v-model="msg"></textarea>
+msg是字符串
+不能把{{msg}}放进textarea的槽里
+
+## 单复选
+<input type="checkbox" v-model="isChecked">
+isChecked是布尔变量
+
+## 多复选
+<input type="checkbox" value="a" v-model="arr">
+<input type="checkbox" value="b" v-model="arr">
+<input type="checkbox" value="c" v-model="arr">
+arr是字符串数组
+
+## 单选
+<input type="radio" value="a" v-model="picked">
+<input type="radio" value="b" v-model="picked">
+<input type="radio" value="c" v-model="picked">
+picked是字符串
+
+## 下拉菜单
+<select v-model="picked">
+  <option disabled value="">选类别</option>
+  <option>A</option>
+  <option>B</option>
+  <option>C</option>
+</select>
+picked是字符串
+
+## 列表渲染下拉菜单
+<select v-model="picked">
+    <option disabled value="">选类别</option>
+    <option v-for="item in items" :value="item.value"> {{item.title}}</option>
+</select>
+picked是字符串
+
+# 值绑定
+对单选、单复选、下拉菜单这种选择框，选定后的数据是字符串或真值。
+但也可通过值绑定 :value :true-value :false-value，绑成其他类型的数据。
+
+## 单复选
+<input type="checkbox" v-model="isChecked" :true-value="yes" :false-value="No">
+选定后isChecked是字符串，选定时值为 "yes"/"No"，不再是真值。
+
+## 下拉菜单
+<select v-model="picked">
+    <option :value="{name:'dingxin'}"> dingxin </option>
+</select>
+选定后picked是对象，不再是字符串。
+
+# .trim修饰符
+<input v-model.trim="msg">
+用户输入的首尾是可以存在空格的，但输入多个空格只有一个生效。
+用.trim可以去掉这个空格。
