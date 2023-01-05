@@ -1,0 +1,67 @@
+# 定义组件
+.vue文件 export default {} 默认导出的就是组件，这种方式叫单文件组件/SFC
+
+# 使用组件
+即导入&注册，用import导入，在components注册。
+SFC名字应为PascalCase格式。
+
+<script>
+import ButtonCounter from './ButtonCounter.vue'
+export default {
+  components: {
+    ButtonCounter,
+  }
+}
+<ButtonCounter />   //使用时记得关闭组件
+
+
+# props & v-bind
+这是内外范畴的相对概念，由外向内传递(数据)。
+1.内部用props声明数据名字:
+export default {
+  props: ['title']  //声明，props是字符串数组
+}
+{{title}} // 使用，就像在data中定义一样
+
+2.外部用bind把数据传进去。
+<Blog :title="AAA" />
+
+# emits & v-on
+这是内外范畴的相对概念，由内向外触发(事件)。
+1.内部用emits声明事件名字：
+export default {
+    emits: ['break-up']  //声明，emits是字符串数组
+}
+$emit('break') // 使用，用$emit触发事件
+
+2.外部用on监听事件
+<Blog @break-up="methodA" />
+
+# slot & innerHTML
+也是内外范畴，是内容和位置的关系。
+1.外部的innerHTML即内容
+<Blog> innerHTML </Blog>
+
+2.内部的<slot>坑位即位置
+<template>
+    got <slot></slot> // 渲染为: got innerHTML
+</template>
+
+# 动态组件
+1.用<component :is=".."></component>动态切换组件：
+export default {
+    components:{
+        ComponentA, ComponentB, ComponentC,
+    },
+    data(){
+        return {
+            current_component_name:"ComponentA",
+        }
+    }
+}
+<component :is="current_component_name"></component>    // 渲染为 <ComponentA />
+
+2.用<KeepAlive>避免切换时销毁原组件：
+<KeepAlive>
+    <component :is="current_component_name"></component>
+</KeepAlive>
