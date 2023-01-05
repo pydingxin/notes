@@ -1,0 +1,89 @@
+侦听器是响应式状态改变时，自动触发的函数
+
+# 基本示例
+export default {
+    data() {
+      return {
+        msg: '',
+        mgs:{info:{career:{name:'jilimei'}}},
+      }
+    },
+    watch: {
+      msg(newval, oldval) {...},    // 侦听响应式状态，变量名即函数名
+      'mgs.info.career.name'(newval,oldval){...},  // 侦听mgs.info.career.name的赋值
+    },
+}
+
+# 树形触发
+侦听根本上是侦听变量赋值，如果变量本身没有整体赋值，不会触发侦听器。
+export default {
+    data() {
+      return {
+        msg:{info:{career:{name:'jilimei'}}},
+      }
+    },
+    watch: {
+      msg(newval,oldval){...},
+    },
+}
+msg.info.career.name="dingxin" //未对msg赋值，不会触发msg侦听器
+--------------------------------------------------------------------
+deep启动树形触发，侦听树上所有变量，任意非根赋值，都触发根的侦听器
+export default {
+    data() {
+      return {
+        msg:{info:{career:[{name:'jilimei'}]}},
+      }
+    },
+    watch: {
+      msg:{
+        handler(newval,oldval){...},
+        deep:true,
+      }
+    },
+}
+msg.info.career[0].name="dingxin" //会触发msg侦听器
+
+# 初始触发
+侦听器启动时，初始值已存在，只在数据改变时触发。
+若要启动时，对初始值也触发一次，可用immediate功能：
+export default {
+    data() {
+      return {
+        msg:"wtf",
+      }
+    },
+    watch: {
+      msg:{
+        handler(newval,oldval){...},
+        immediate:true,
+      }
+    },
+}
+
+# 触发与dom更新顺序
+vue的顺序是，侦听器先触发，然后更新dom。
+在侦听器中访问更新后的dom，要开flush功能。
+export default {
+    data() {
+      return {
+        msg:"a",
+      }
+  },
+  watch:{
+    msg:{
+      handler(){
+        //无flush得a 开flush后得ab
+        document.querySelector('#div').innerHTML;
+      },
+      flush: 'post'
+    },
+  }
+}
+
+<div id="div">{{ msg }}</div>
+<input v-model="msg">   //改变msg a → ab，触发侦听器
+
+# $watch()
+手动开关侦听器。
+感觉没什么意思，可以用一个响应值控制侦听器提前return，跟这效果一样。

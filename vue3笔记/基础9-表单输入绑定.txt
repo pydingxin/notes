@@ -8,6 +8,9 @@ model指令的表单绑定是双向传递
 输入框 <input> <textarea> 监听input事件
 选择框 <input type="radio"> <input type="checkbox"> <select> 监听change事件，可配合label。
 
+# 支持深层绑定
+<input  v-model="msg.info.career.name">
+
 # 基本用法
 
 ## 文本
