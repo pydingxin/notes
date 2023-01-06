@@ -1,0 +1,41 @@
+使用的组件在components声明、传递的数据在props声明、抛出的事件在emits声明。
+vue强调声明，这很有道理，清晰的声明本身就是文档，方便理解和复用。
+
+# props声明
+export default {
+    props:['title']
+}
+
+# props名字格式
+这特性一般也没啥用。
+内部若用camelCase，外部绑定时可用camelCase，或者camel-case，都能正确传递。
+
+# 静态值 or 动态值
+外部传递props时
+可直接用静态值<Blog title="abc">
+也可绑定表达式<Blog :title="varX">
+区别是，静态值都被认为是字符串
+<Blog age="5"> <Blog age=5>都被认为是字符串"5"
+这时内部计算会触发js的搞笑机制，age+1结果为"51"，age*2结果为10
+所以，props应与bind成对使用，不要用静态值。
+
+# 传递不同类型数据
+传递非字符串数据，必须bind绑定表达式:
+数字    <Blog :age="5">
+真值    <Blog :yes="true">
+数组    <Blog :num="[1,2,3]">
+对象    <Blog :msg="{name:'abc',age:8}">
+字符串  <Blog :name="'dingxin'">
+
+# 无参bind
+利用无参bind的特性，一次绑定多个props
+msg:{name:'abc',age:8}
+<Blog :="msg">
+
+# 单向数据流
+props是父→子，不应在子组件内部修改，否则会扰乱思考，很快你就搞不清自己在干什么。
+若要改动，应抛出事件，让父组件去改。
+
+# prop校验
+校验只能抛出警告给别人看，不能做其他操作。
+感觉也没什么用，有这功夫不如整个validator。

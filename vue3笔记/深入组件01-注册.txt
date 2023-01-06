@@ -14,5 +14,7 @@ export default {
 }
 
 # 组件名
-推荐注册为PascalCase格式，使用时 <PascalCase/> 和 <pascal-case/> 都可以。
+这特性一般没啥用。
+为提高可读性，注册时用PascalCase格式。
+使用时 <PascalCase/> 和 <pascal-case/> 都可以。
 vue会把前者都翻译为后者，因为dom本身并不允许PascalCase。
