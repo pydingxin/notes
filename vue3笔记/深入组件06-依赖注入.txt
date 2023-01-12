@@ -1,0 +1,34 @@
+# Prop逐级透传问题
+组件树隔多层向下传递数据，要层层接收绑定props。
+依赖注入就是为了解决这个问题。
+
+# Provide
+向下传数据：
+import {computed} from 'vue' 
+export default {
+    data(){
+        return {
+            A:"hello",
+        }
+    },
+    provide(){
+        return{
+            proA: computed(()=>this.A), //computed提供响应性
+        }
+    }
+}
+
+# Inject
+注入上层的数据：
+export default {
+    inject:['proA'] //同名变量注入到this作用域，像props一样
+}
+
+# 别名
+如果不喜欢同名，也可使用别名:
+export default {
+    inject:{
+        localA:{from: 'proA'}
+        localB:{from: 'proB', default:'nops'} //若上层未提供，则使用默认值
+    }
+}
