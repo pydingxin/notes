@@ -1,0 +1,38 @@
+# 插槽内容与出口
+插槽即占位符
+如<Son>:
+<template>
+    父组件给的外部内容，放到这里 → <slot></slot>
+</template>
+
+在<Dad>中使用:
+<Son>外部内容</Son>
+
+Dad会正常展开<Son>，并把外部内容放到Son内部<slot></slot>位置。
+内容是任意的，比如多个原生元素或组件。
+
+
+# 渲染作用域
+<Son>...</Son>
+这里的...使用父组件的作用域，父组件能把自己的数据放进去，这自然符合常理。
+
+# 默认内容
+<slot>若父组件未提供内容，此即默认内容</slot>
+
+# 具名插槽
+子组件中slot的name 和 父组件中template的v-slot 是成对的
+在<Layout>中使用slot:
+<template>
+    <slot name="header"></slot>
+    <slot name="content"></slot>
+    <slot name="footer"></slot>
+</template>
+
+在<Dad>中使用v-slot指令：
+<Layout>
+    <template v-slot:header> <Header1> </template>
+    <template v-slot:content><Content1></template>
+    <template #footer> <Foot1> </template> //v-slot缩写为#
+</Layout>
+
+# 到这里就可以打住了，我很难想象什么场景会用到插槽，它更像是给组件库开发者使用的。
