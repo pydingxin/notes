@@ -1,0 +1,48 @@
+# 透传
+<Son keyX=".." @eveX="..">
+若在Son中：
+1.keyX未在props声明，eveX未在emits声明
+2.Son是单根组件
+这种数据或事件就会透传到根上，就像直接写在根上一样。
+
+# 透传规则
+对透传的属性：
+如果是class和style，会和根上已有的合并。
+否则会替换根上已有的。
+-------------------------------------
+对透传的监听器：
+和根上已绑定的同时存在，监听器不能替换。
+-------------------------------------
+如果子组件也用了单根孙子组件，会继续透传属性，除非被中间层的props拦截。
+
+# 禁用透传
+export default{
+    inheritAttrs: false,
+}
+给子组件的属性和监听器，若未被props/emits声明，都放在$attrs对象中。
+禁用透传后，仍可以通过$attrs使用，有时也有用处。
+
+# $attrs示例
+<UiButton>：
+export default{
+    inheritAttrs: false,
+}
+<template>
+    <div class="ui-wrapper">
+        <button :="$attrs"> click </button> //对$attrs无参bind
+    </div>
+</template>
+使用<UiButton>时，父组件给的属性和监听器，都会绑在button上，而不是div上。
+
+# 多根组件
+多根组件不自动透传，需要手动绑到某个节点上：
+<template>
+    <p> header </p>
+    <p :="$attrs"> body </p>    //$attrs在this作用域中
+    <p> footer </p>
+</template>
+否则vue会抛出警告。
+
+# js访问$attrs
+$attrs在this作用域里，可直接使用：
+{{this.$attrs.key}}

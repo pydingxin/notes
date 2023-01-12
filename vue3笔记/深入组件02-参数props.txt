@@ -1,4 +1,5 @@
-使用的组件在components声明、传递的数据在props声明、抛出的事件在emits声明。
+参数就是props，是组件间向下传递的单向数据。
+使用的组件在components声明、传递的参数在props声明、抛出的事件在emits声明。
 vue强调声明，这很有道理，清晰的声明本身就是文档，方便理解和复用。
 
 # props声明
