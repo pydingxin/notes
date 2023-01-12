@@ -16,7 +16,7 @@
 父数据绑到子输入框，要props和带参emits配合实现：
 -------------------------------------
 Dad中：
-<Son v-model:dadFormKey="sonProp">
+<Son v-model:sonProp="dadFormKey">
 -------------------------------------
 Son中：
 export default {
