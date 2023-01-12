@@ -1,0 +1,31 @@
+# 触发与监听事件
+这在组件基础里说过了，内部触发+外部捕获。
+1.emits:[eventA]
+2.$emit('eventA')
+3.<Son @eventA='...' />
+只能在直接父子[Dad&Son]间触发，不能平级/跨层/冒泡触发。
+
+
+# 事件参数
+从内向外触发事件时，还可以传参:
+2.$emit('eventA', arg1, arg2)
+事件处理函数接收参数:
+3.<Son @eventA="(arg1,arg2)=>{...}">
+
+# 组件 v-model
+父数据绑到子输入框，要props和带参emits配合实现：
+-------------------------------------
+Dad中：
+<Son v-model:dadFormKey="sonProp">
+-------------------------------------
+Son中：
+export default {
+    props:['sonProp'],  //向下绑定
+    emits:['update:sonProp'], //向上传递，规定的事件名格式含冒号
+}
+<input type="text", 
+    :value="sonProp"
+    @input="$emit('update:sonProp', $event.target.value)"
+/>
+-------------------------------------
+可以绑定多个参数，按这个模板来即可。
