@@ -22,7 +22,7 @@ export default{
 给子组件的属性和监听器，若未被props/emits声明，都放在$attrs对象中。
 禁用透传后，仍可以通过$attrs使用，有时也有用处。
 
-# $attrs示例
+# $attrs绑定
 <UiButton>：
 export default{
     inheritAttrs: false,
