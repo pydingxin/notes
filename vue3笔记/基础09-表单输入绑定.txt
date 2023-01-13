@@ -72,3 +72,9 @@ picked是字符串
 <input v-model.trim="msg">
 用户输入的首尾是可以存在空格的，但输入多个空格只有一个生效。
 用.trim可以去掉这个空格。
+
+# vue表单绑定仅用于：
+<input>
+<select>
+<textarea>
+components
