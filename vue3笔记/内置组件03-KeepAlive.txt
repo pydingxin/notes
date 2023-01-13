@@ -1,0 +1,35 @@
+# 基本使用
+在动态组件切换时缓存组件，阻止销毁。
+export default{
+    component:{"comp1","comp2"},
+    data(){return {
+        view:"comp1",
+    }}
+}
+<KeepAlive>
+    <component :is="view" />
+</KeepAlive>
+
+# 包含/排除
+include/exclude指定缓存哪些组件
+<KeepAlive :include="name1,name2">      //逗号分隔字符串格式
+<KeepAlive :include="/name*/">          //正则表达式格式
+<KeepAlive :exclude="['name1','name2']">//数组格式
+--------------------
+选项式vue中，被切换的组件要自己命名，此功能才能生效：
+export default {
+    name:'name1'
+}
+
+# 最大缓存实例数
+使用LRU方法
+<KeepAlive :max="3">
+
+# 缓存实例的生命周期
+切换组件也有钩子，进缓存调用activated，出缓存调用deactivated。
+被切换的组件要自己定义：
+export default {
+    activated(){....},
+    deactivated(){..},
+}
+被缓存组件的子组件也可使用该钩子。
