@@ -1,0 +1,16 @@
+状态管理就是所有组件共享的全局响应式状态。
+特定主题的状态集合叫store，放在单独的文件里。
+
+例如 store.js：
+import {reactive} from 'vue'    // reactive()使其变为响应式
+export const store = reactive({
+    count:0,       
+    increment(){ this.count++ } //最好专门定义函数修改全局状态，否则不好追踪。
+})
+
+
+要让所有组件共享，可以放在globalProperties里：
+import {store} from './store.js'
+app.config.globalProperties.st = store
+这样变量st就暴露在所有组件的this作用域里，可以直接用。
+
