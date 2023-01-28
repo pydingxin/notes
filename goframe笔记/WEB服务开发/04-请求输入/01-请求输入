@@ -29,7 +29,7 @@ body中的原始内容，如json/xml
 获取Query/Body参数
 -------------------------------------------------
 ## GetForm 
-form参数
+form参数，根据请求头Content-Type智能解码。
 -------------------------------------------------
 ## Get/GetRequest
 获取5类提交的数据:Router/Query/Body/Form/Custom
@@ -57,4 +57,4 @@ r.Get(xx).Int() //对浮点数向下取整
 有两类方法使用多种参数，如果不同种参数有重名的，优先级如下
 Get/GetRequset: Router < Query < Body < Form < Custom
 GetQuery: Query > Body
-为避免这种隐形bug，最好前端只用一种提交方式，后端只用一种获取方式。
+为避免这种隐形bug，最好只用Form+Json的方式，够用且无疑义。
