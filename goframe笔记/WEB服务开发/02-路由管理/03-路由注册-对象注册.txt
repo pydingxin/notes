@@ -1,0 +1,61 @@
+对象注册就是把路径绑定到一个常驻内存的对象上，用方法名自动生成路径名。
+这节涉及2个函数：BindObject & BindObjectMethod
+
+# BindObject
+type Controller struct{}
+func (c *Controller) Index(r *ghttp.Request) {}
+func (c *Controller) Show(r *ghttp.Request) {}
+func main() {
+	c := new(Controller)
+	s.BindObject("/object", c)
+}
+
+用上述格式，/object指向该对象，对象方法名就是下个层级的路径
+/object/index → Index
+/object/show → Show
+其中Index是主方法： /object = /object/index
+
+
+# BindObject之 路由内置变量
+在上文基础上，用{.struct}、{.method}分别指代类名、方法名，方便路径名构造。
+type Order struct{}
+func (o *Order) List(r *ghttp.Request) {}
+func main(){
+    c := new(Order)
+    s.BindObject("/{.struct}/{.method}", c) List绑到/order/list
+    s.BindObject("/{.struct}-{.method}", c) List绑到/order-list
+}
+
+# BindObject之 命名风格规则
+方法名默认是AbcDef形式，转为路径名时，默认风格是：
+Abc→abc AbcDef→abc-def
+共有四种风格：
+    UriTypeDefault  = 0 // 全转小写，单词间加横线连接符（默认）
+    UriTypeFullName = 1 // 原封不动
+    UriTypeAllLower = 2 // 仅转小写，不使用连接符
+    UriTypeCamel    = 3 // 驼峰命名，仅首字母小写
+需要修改直接设置：
+    s.SetNameToUriType(ghttp.UriTypeDefault)
+
+# BindObject之 注册部分方法
+可以只注册部分方法，用第三个参数指定，如：
+    s.BindObject("/{.struct}/{.method}", c, "ListBox,List")
+这样只注册了ListBox,List两个方法，其他方法未注册。
+
+# BindObject之 钩子方法
+Init 和 Shut 是两个钩子：
+BindObject时，它们不会被自动注册为路径。
+只要定义了，该对象每个被注册的方法的调用前后，都会自动调用它们。
+    type Controller struct{}
+    func (c *Controller) Init(r *ghttp.Request) {}
+    func (c *Controller) Shut(r *ghttp.Request) {}
+每个方法的签名都是 func(r *ghttp.Request)，包括钩子方法。
+
+# BindObjectMethod
+BindObject的路径是自动生成的，如果想用自定义路由规则，就用BindObjectMethod。如：
+    s.BindObjectMethod("/show/{name}", c, "Show")
+这把该路径绑到一个方法上，第三个参数有且只有一个。
+
+# RESTful对象注册
+restful理念不行，别用。
+

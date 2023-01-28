@@ -1,0 +1,33 @@
+# group 分组路由
+分组路由即有相同前缀的一组路由，创建组即绑定其组路径前缀：
+    group := s.Group("/api")
+------------------------------------------------------
+调用group的方法，扩展路径，方法名就是该路径的HTTPMethod：
+    group.GET("/bill", func(r *ghttp.Request) {})   → get  /api/bill
+    group.POST("/order", func(r *ghttp.Request) {}) → post /api/order
+------------------------------------------------------
+可使用的group方法有：
+    GET/PUT/POST/DELETE/PATCH/HEAD/CONNECT/OPTIONS/TRACE/ALL(所有method)
+
+# group.Group()
+层级注册让代码更清晰直观。
+就是把代码写成树形，并在group上调用Group生成子组：
+s.Group("/api", func(group *ghttp.RouterGroup) {
+    group.GET("/test", func1)
+    group.Group("/order", func(group *ghttp.RouterGroup) {
+        group.GET("/list", func2) 
+    })
+    group.Group("/user", func(group *ghttp.RouterGroup) {
+        group.POST("/edit", func5)
+    })
+})
+
+# group.Middleware()
+分组用中间件，扩展该组功能：
+group.Middleware(MiddlewareAuth, MiddlewareCORS)
+
+# group.Hook()
+给组内某个路径挂钩子，该路径被访问时自动调用钩子：
+group.Hook("/test", ghttp.HookBeforeServe, func(r *ghttp.Request) {
+    //ghttp.HookBeforeServe 指定调用钩子的时机
+})

@@ -1,0 +1,25 @@
+"github.com/gogf/gf/v2/util/grand"
+这个包封装了很多随机数方法，对其他项目也非常有用
+
+1.整数
+func N(min, max int) int //[min,max]随机整数，包括负数
+func Intn(max int) int   //[0,max)随机整数
+
+2.字符串
+func S(n int, symbols ...bool) string //定长随机数字字母，可包含符号
+func Digits(n int) string             //定长数字串
+func Letters(n int) string            //定长字母串
+func Symbols(n int) string            //定长符号串
+
+3.字节
+func B(n int) []byte     //定长字节串
+
+4.洗牌
+func Perm(n int) []int   //[0,n)随机排序，每个数字只出现一次
+
+5.挑选
+func Str(s string, n int) string //从给定字符串中挑出定长随机串
+
+6.概率
+func Meet(num, total int) bool	//是否满足num/total的概率，如1/100
+func MeetProb(prob float32) bool	//是否满足prob的概率，如0.3

@@ -1,0 +1,29 @@
+当struct的字段是struct/map/slice时，自动递归校验。
+
+如type Option struct {
+	Page int `v:"min:1"`
+}
+
+# 字段为struct
+type SearchReq struct {
+	O1 Option 	
+}
+！校验SearchReq实例时，也会校验其Option字段。
+！嵌套struct时，这棵struct树上不能有重名字段，否则会panic.
+！O1为默认零值时也会被校验，嵌套struct不适用可选校验的规则。
+！字段里别用指针，涉及指针都会引发某些问题，老老实实用基本功能就行。
+
+# 字段为slice
+type SearchReq struct {
+	O2 []Option
+}
+自动校验其中每个Option。
+此时err.Maps()的键值会覆盖合并。
+
+# 字段为map
+type SearchReq struct {
+	O3 map[string]Option 	
+}
+自动校验O3中每个键值的Option.
+err.Maps()仍会覆盖合并。
+

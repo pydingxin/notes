@@ -1,0 +1,10 @@
+校验对象就是Validator对象，就是实际执行校验的。
+这块没什么要点，不必单独使用该模块。
+
+它使用链式语法，比如：
+Validator.New().Rules("min:18").Messages("最小是18岁").CheckValue(16)
+其中Rules设置规则，Message设置错误信息，CheckValue传入数据开始校验。
+该模块接口文档有些落后，以实际引用库为准。
+
+被校验的数据可以是struct/map/..
+

@@ -1,0 +1,34 @@
+参数就是被校验的数据，一般是struct，也可以是map string int等
+
+# 单数据校验
+单数据是不复合的类型，就是string int这种基础类型。如：
+data:="123456"
+rules:="length:6,16"
+ctx:=gctx.New()
+if err := g.Validator().Rules(rules).Data(data).Run(ctx); err != nil {
+	fmt.Println(err.String())
+}
+用法简单，场景较少。
+
+# struct校验
+把规则、错误信息定义在tag里，然后 g.Validator().Data(obj).Run(ctx) 执行。
+
+## tag规则
+`v:"[alias@]rule1|rule2..[#msg1|msg2..]"`
+-----------------------------------------------------
+字段别名、错误信息是可选的，若用须写分隔符@#
+-----------------------------------------------------
+多条校验规则或错误信息用|隔开
+-----------------------------------------------------
+alias会用在error里，这是其唯一用途。
+由于前后端字段名不同，用前端字段名作别名，方便前端看错误信息。
+如type User struct {
+	Name string `v:"myname@required#必填名字"`
+}
+err.Maps()能返回：{"myname": {"required": "必填名字"}}
+
+## 用map指定校验规则
+规则可放在tag里，也可拆出来放在map里，但这种分离的写法最好别用。
+
+# map校验
+map和struct是等价的，但一般用不到map，以struct为主。

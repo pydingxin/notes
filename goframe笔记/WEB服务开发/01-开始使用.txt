@@ -1,0 +1,34 @@
+webserver由ghttp模块实现
+
+# 基本用法
+func main() {
+    s := g.Server()
+    s.BindHandler("/", func(r *ghttp.Request) {
+        r.Response.Write("hello world") 
+    })
+    s.SetPort(80)   
+    s.Run()
+}
+在路径上绑函数，执行就完了
+
+# 静态服务
+s.SetServerRoot("/home/www/")   //设置根目录
+s.SetIndexFolder(true)          //允许查看文件夹
+
+# 多端口监听
+s.SetPort(8100, 8200, 8300)
+
+# 多实例
+s1 := g.Server("s1") //每个名字对应一个全局单例
+s2 := g.Server("s2")
+s1.SetPort(8080)
+s2.SetPort(8081)
+s1.Start()
+s2.Start()
+g.Wait()
+
+# 域名
+s.Domain("127.0.0.1").BindHandler("/", Hello1)
+s.Domain("localhost").BindHandler("/", Hello2)
+不同域名不同路径上绑不同函数
+域名必须完整，不支持正则匹配

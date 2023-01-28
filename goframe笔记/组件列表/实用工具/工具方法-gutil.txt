@@ -1,0 +1,6 @@
+"github.com/gogf/gf/v2/util/gutil"
+
+这个包打印输出数据，比fmt更清晰，也非常有用
+Dump  输出美观打印的内容
+DumpWithType 包含类型和子数目
+DumpTo 输出到writer

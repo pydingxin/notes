@@ -1,0 +1,18 @@
+把gmeta.Meta嵌入struct的定义，在嵌入域的tag中写入一些标签，在运行时获取标签，获得定义信息。
+
+如 type User struct {
+	gmeta.Meta `orm:"user" db:"mysql"`	//嵌入定义中
+	Id         int
+	Name       string
+}
+user := User{}
+
+有两个获取标签的方法：
+func Data(object interface{}) map[string]interface{}
+func Get(object interface{}, key string) *gvar.Var
+
+gmeta.Data(user)得到一个map[string]string:
+{db:"mysql",orm:"user"}
+
+gmeta.Get(user, "orm")得到指针，可用String()转为字符串：
+gmeta.Get(user, "orm").String() → "user"

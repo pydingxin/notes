@@ -1,0 +1,66 @@
+路由管理即path-handler管理，为不同路径绑定方法，以及从路径中提取参数。
+路径用/划分层级，先确定层级再处理。
+
+# 注册路由：
+func (s *Server) BindHandler(pattern string, handler interface{})
+直接绑定就是最基础的注册路由
+-------------------------------------------
+pattern格式为 
+[HTTPMethod:]路由规则[@domain]
+如 "GET:/order/info@localhost"
+HTTPMethod/domain是可选的，默认绑定<所有方法>和<所有域名>。
+-------------------------------------------
+handler格式为
+func(r *ghttp.Request){
+    r.Response.WriteJson(r.Router)  //r.Router是该请求匹配的路由信息
+}
+
+# 精确匹配规则
+精确匹配就是使用"/order/info"这种静态路径
+这里有2个层级，每层内容完全相同才能匹配到。
+
+# 动态匹配规则
+包含命名/模糊/字段3种匹配规则
+动态匹配就是从路径中提取参数，用ghttp.Request.Get获取匹配到的参数。
+-------------------------------------------
+## 命名匹配 :varname
+适用正则([^/]+) 不含字符/ 不能为空
+一个命名匹配就是一个层级，相对于字段匹配不是很灵活
+
+如/user/:name 必须两层，层1是精确user，层2是非空名字
+/user/john                √ r.Get("path")为"john"
+/user/you                 √
+/user/                    x 末层为空，实有1层
+/user/john/profile        x 三个层级
+/user/john/               √ 末层为空，实有2层
+-------------------------------------------
+## 字段匹配 {varname}
+适用正则([\w\.\-]+) 数字字母下划线中划线点号 不能为空
+与命名匹配的区别在于，字段匹配可以在一个层级用多次，还可以指定格式，更加灵活
+如 /dt-{tb}/{obj}-{act} 匹配2个层级，花括号外的都是指定的格式
+其实字段匹配涵盖了命名匹配的功能，/{tb}和/:tb用法没有区别
+-------------------------------------------
+## 模糊匹配 *varname
+适用正则(.*) 内部可含/ 可为空
+模糊匹配可以配置任意层级、任意结果，这就是模糊的原因。
+
+如/src/*path 匹配层级>=1
+/src                      √ path=""
+/src/                     √ 
+/srcX                     x 
+/src/somefile.go          √ path="somefile.go"，注意不包含两端的/
+/src/subdir/somefile.go   √ path="subdir/somefile.go"
+
+如/src/*path/show 匹配层级>=2
+/src/somefile/show     √ 
+/src/subdir/file/show  √ 
+/src/show              √ path=""
+
+如/src/*path/:show 匹配层级>=2
+这种匹配就太模糊了，基本不能用
+
+# 优先级控制
+目前有四个匹配方式：精确、字段、命名、模糊。
+一个路径可能符合不同pattern的规则，到底调用哪个，就涉及优先级问题。
+但解决问题的最好方式就是避免其发生，所以最佳方法是：
+不用模糊匹配和命名匹配，只用字段匹配，保持路径树简单清晰。

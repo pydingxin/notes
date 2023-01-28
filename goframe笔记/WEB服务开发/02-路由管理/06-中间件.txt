@@ -1,0 +1,75 @@
+类似对象注册的Init/Shut，分组路由的Hook，把钩子函数挂到对象/分组上。
+中间件在处理请求时自动调用的函数，说白了就是全局钩子。
+-------------------------------------------
+中间件函数标签和普通handler一样：func(r *ghttp.Request)
+
+# 中间件类型（不同顺序）
+r.Middleware.Next()=执行正式处理函数，这必须手工调用，其位置决定了2种顺序：
+-------------------------------------------
+func MiddlewareA(r *ghttp.Request) {
+	... //先做本函数的工作，后执行正式处理函数，这叫前置，把自己置于正式过程之前
+	r.Middleware.Next()
+}
+-------------------------------------------
+func MiddlewareB(r *ghttp.Request) {
+	r.Middleware.Next()
+	... //先执行正式处理函数，后做本函数的工作，这叫后置，把自己置于正式过程之后
+}
+-------------------------------------------
+如果不调用r.Middleware.Next()，就不执行正式处理。
+
+# 中间件注册
+全局中间件:
+    s.Use(MiddlewareA, MiddlewareB) //无法拦截静态文件请求
+分组路由中间件:
+    group.Middleware(MiddlewareA, MiddlewareB) //在分组路由中使用
+
+# 执行优先级
+同一层级里，不同中间件按注册顺序执行。
+全局中间件先执行，分组路由中间件后执行，这也符合直觉。
+
+# 中间件模板
+## 跨域
+func MiddlewareCORS(r *ghttp.Request) {
+	r.Response.CORSDefault()
+	r.Middleware.Next()
+}
+
+## 鉴权
+func MiddlewareAuth(r *ghttp.Request) {
+	if r.Get("token").String() == "123456" {
+		r.Middleware.Next()
+	} else {
+		r.Response.WriteStatus(http.StatusForbidden)
+	}
+}
+
+## 分组路由的鉴权例外
+s.Group("/admin", func(group *ghttp.RouterGroup) {
+    group.GET("/login", func(r *ghttp.Request) { })
+    group.Group("/", func(group *ghttp.RouterGroup) {
+        group.Middleware(MiddlewareAuth)
+        group.GET("/view", func(r *ghttp.Request) { })
+    })
+})
+用这个格式，/admin/view鉴权，/admin/login不鉴权
+
+## 统一错误处理
+func MiddlewareErrorHandler(r *ghttp.Request) {
+	r.Middleware.Next()
+	if r.Response.Status >= http.StatusInternalServerError {
+		r.Response.ClearBuffer() 
+		r.Response.Writeln("出错了，稍后再试吧")
+	}
+}
+func main() {
+	s.Use(MiddlewareErrorHandler)
+    s.BindHandler("/total", func(r *ghttp.Request){
+        panic("坏掉了")
+    })
+}
+
+若handler panic:
+-框架自动recover并设置r.Response.Status(>=http.StatusInternalServerError)
+-后置中间件正常执行，检测到handler执行错误
+-buffer是返给用户的数据，被ClearBuffer()清空

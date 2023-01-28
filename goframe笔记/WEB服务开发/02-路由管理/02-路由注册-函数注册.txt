@@ -1,0 +1,18 @@
+函数注册就是用BindHandler直接绑定函数
+
+# 绑函数
+s.BindHandler("/total", func(r *ghttp.Request){})
+
+# 绑包函数
+func Total(r *ghttp.Request){}
+func main() {
+	s.BindHandler("/total", Total)
+}
+
+# 绑对象方法
+type Controller struct {}
+func (c *Controller) Total(r *ghttp.Request) {}
+func main() {
+	c := &Controller{}
+	s.BindHandler("/total", c.Total)
+}

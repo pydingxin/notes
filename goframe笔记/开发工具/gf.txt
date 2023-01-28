@@ -1,0 +1,22 @@
+【开发工具】
+脚手架gf，直接安装编译好的windows版本。
+
+创建项目 
+gf init myapp   //当前目录创建名为myapp的项目
+gf init .       //当前目录名为项目名，不能用中文
+
+编译项目
+gf build    //直接在主目录生成main.exe，拿去部署。可指定架构编译
+
+自动编译
+gf run main.go //修改go代码后自动重新编译，重启服务
+
+资源打包，把静态资源和可执行文件打包到一起发布
+
+gf -h   //工具帮助
+
+使用mssql
+1、go get 安装 
+2、配置config
+3、main.go里import
+

@@ -1,0 +1,14 @@
+当给定规则不含required*时，该字段可以为零值，其他规则就不必生效。
+此时对值为0 "" nil的整数、字符串、指针字段，放弃该字段的校验，这就叫可选校验。
+
+# 例如：
+type Params struct {
+	Size int	`v:"between:1,100"` //没有required，零值时不校验
+	Id 	*int	`v:"between:1,100"` //没有required，零值时不校验
+	Name string `v:"size:10"` 		//没有required，零值时不校验
+}
+obj := &Params{} //Data()参数可以是struct的指针
+err := g.Validator().Data(obj).Run(gctx.New()) //err结果为nil
+
+！！！关于指针：
+虽然说是这么说，但struct的字段不要用指针，这完全没有必要，还会引发某些问题。
