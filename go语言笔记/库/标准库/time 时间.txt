@@ -1,0 +1,170 @@
+---Duration-------------------------------------------------------
+Duration 是个数字类型，表示时间长度，可存储290年时间长度：
+type Duration int64
+
+时、分、秒、毫秒、微妙、纳秒都是表时间长度的数字：
+Nanosecond  Duration = 1    
+Microsecond Duration = 1000 * Nanosecond
+Millisecond Duration = 1000 * Microsecond
+Second      Duration = 1000 * Millisecond
+Minute      Duration = 60 * Second
+Hour        Duration = 60 * Minute
+
+可直接使用这些数字，如 time.Millisecond
+未定义更大的时间刻度
+Duration 的标准格式是"AhBmCs"
+---Duration操作-------------------------------------------------------
+
+# time.ParseDuration(string)(Duration,error)
+可以分析字符串代表的时间长度，如"10h","1h3s"
+可用单位有h/m/s/ms/us/ns，不可大写，时分秒支持浮点数
+
+# time.Since(last Time)Duration
+从过去的时间点last，到当前时间点，已经经过的时间长度
+
+# time.Until(next Time)Duration
+从当前时间点，到将来时间点next，将要经过的时间长度
+Since过去 Until将来
+
+# du.Hours() float64
+# du.Minutes()float64
+# du.Seconds()float64
+Duration转为小时数、分钟数、秒数
+
+# du.Milliseconds() int64
+# du.Microseconds() int64
+# du.Nanoseconds() int64
+Duration转为毫秒数、微秒数、纳秒数
+
+# du.Round(Duration)Duration
+秒以下是整数，时分秒是浮点数，可以到某个精度
+把du近似到某个精度（不知道有啥用）
+
+# du.Truncate(x Duration)Duration
+截断，小于x的单位扔掉
+
+# du.String()string
+与ParseDuration相反的操作，返回字符串
+
+
+---time.Location-------------------------------------------------------
+时区
+type Location struct{...} 
+
+# time.FixedZone(name string, offset int) *Location
+用偏移产生时区，设定时区名字和偏移
+UTC与不同时区的差别，都是以小时为单位，加上偏移的秒数即可
+如叫做"UTC-8"的时区 lo:= time.FixedZone("UTC-8",-8*60*60) //东八区时间晚
+
+不同时区都有标志性的城市名字，不需要这么自己计算偏移
+# time.LoadLocation(name string)(*Location,eror)
+比如 time.LoadLocation("Asia/Shanghai")就直接产生了一个上海的时区
+这个函数在windows上不能执行
+
+# lo.String()
+返回时区的名字
+
+go的时间，是带着时区的，如 "2022-10-30 16:16:44.8672107 +0800 CST m=+0.005848501"，有时区简写CST，偏移量等信息
+
+不涉及时区之间的协作，不用太关注时区问题
+用本地时区即可 time.Local，默认就是CST
+
+CST是美国中部时间，即UTC+8小时，而北京时间是UTC-8小时
+所以go默认的钟表时间是正确的，但时区设置错了
+所以生成的UNIX时间戳，其实是不正确的，偏移量正好弄反了
+
+----------------------------------------------------------
+
+type Time struct{..不必知道怎么定义..}    
+Duration是时间长度，Time是时间点
+
+# time.Date(year, month, day, hour, min, sec, nanosec int, *Location)
+构建日期 如 time.Date(2022,10,30,16,12,16,0,time.Local)
+
+# time.Now() Time 
+获取当前时间点 t:=time.Now()
+
+# t.Unix()
+# t.UnixMicro()
+# t.UnixMilli()
+unix时间戳，秒级 毫秒级 微妙级
+
+# t.Add(Duration) Time
+# t.AddDate(years, months, days int) Time
+一个点加偏移，产生另一个点
+
+# t.Sub(u Time) Duration
+两点相减，计算偏移
+
+# t.After(t2 Time) bool
+# t.Before(t2 Time)bool
+判断先后关系
+
+日历数据：年 月 日
+# t.Date()(int,int,int)
+# t.Year()int
+# t.Month()int
+# t.Day()int
+
+表盘数据：时 分 秒
+# t.Clock()(int,int,int)
+# t.Hour()int
+# t.Minute()int
+# t.Second()int
+
+# t.YearDay()
+一年的第几天，从1开始
+
+# t.ISOWeek()(year,week int)
+哪年的第几个星期，从1开始
+
+# t.String()string
+详细字符串表示，如 "2022-10-30 15:55:47.5810588 +0800 CST m=+0.004403001"
+
+# t.GoString()
+用 time.Date 构建该日期，所需的字符串
+
+# t.Format("2006-01-02 15:04:05")string
+给它示范格式，就可以生成如此格式的时间
+注意，必须是这个时刻："2006-01-02 15:04:05"，它写在RFC草案里了
+
+
+----------------------------------------------------------
+
+# time.Sleep(Duration)
+当前协程睡眠至少Duration
+
+# time.Parse(layout, value)(Time,error)
+layout可以是任意格式，但必须用RFC时间点的数字，如：
+time.Parse("2006-01_02?15:04:05", "2022-10_31?11:58:40")
+
+----------------------------------------------------------
+定时器 Timer/Ticker，Timer是一次性的，Ticker是周期性的
+用封好的 time.After/time.Tick 即可
+
+# time.After(Duration) <-chan Time
+返回一个<-chan Time，这个channel经过Duration后，输出当时的Time时间点
+
+可以为for select设定最长等待时间
+    for{
+        select{
+            case m:= <-ch:
+                ...
+            case <-time.After(time.Second*3):
+                ...
+        }
+    }
+
+# time.Tick(Duration) <-chan Time
+
+由于是周期性的，与range做了底层搭配，实现周期for循环
+    for n:= range time.Tick(time.Second*2){
+        p(n)
+    }
+垃圾，最好别用。可以用for{ time.Sleep()}实现，更简单。
+
+----------------------------------------------------------
+
+注意：time.After/time.Tick 都会产生不被回收的变量，
+如果不手动关闭，会造成内存泄漏。比如在子协程里用，子协程结束，内存就泄漏了。
+所以最好只在主协程里有限使用，或直接使用Timer。

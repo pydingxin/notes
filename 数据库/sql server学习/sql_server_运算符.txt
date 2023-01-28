@@ -1,0 +1,89 @@
+数学运算符[+ - * / %]，+-可用于datetime类型
+数学运算赋值[+= -= *= /= %=]
+
+位运算符[& | ~ ^]与、或、非、异或，把整数视为二进制位运算
+位运算赋值[&= |= ^=]
+
+比较
+= > < >= <= 
+不等于：<> !=
+
+———————————————————————————————————
+集合运算，必须是两个单独的列
+intersect求交集↓
+select id from student
+intersect
+select id from score
+
+except求差集↓
+select id from student
+except
+select if from score
+
+union求并集↓
+select id from student
+union [all]		--union默认是去重的，加上all不去重
+select if from score
+
+———————————————————————————————————
+集合运算的结合 暂存到一张表用as给它一个名字
+(
+	select id from student
+	except
+	select if from score
+)as m
+———————————————————————————————————
+逻辑运算 not 
+放在其他布尔运算符前面，对结果取反
+返回布尔值
+逻辑运算经常与where配合连用
+———————————————————————————————————
+逻辑运算 in 
+判断某个值是否在集合里，返回布尔值
+x [not] in subquery|list. list是圆括号的列表，subquery是返回单列表的查询：
+select id from student a
+where a.id in
+(select id from score) --语法上必须括起来
+
+———————————————————————————————————
+逻辑预算 exists 
+[not] exists(subquery)判断查询是否有结果，要加括号
+返回布尔值
+
+———————————————————————————————————
+逻辑运算like
+str [not] like pattern
+pattern中
+% 匹配任意字符串，包括空串
+_ 匹配任意单个字符
+[dbx]匹配括号中任意单个字符，这里d/b/x都OK
+[^dbx]匹配非括号中任意单个字符，这里是非d/b/x的任意字符
+
+———————————————————————————————————
+逻辑运算 and
+boolean_expression AND boolean_expression 
+连接2个布尔运算，返回布尔值
+
+———————————————————————————————————
+逻辑运算 or
+boolean_expression or boolean_expression 
+连接2个布尔运算，返回布尔值，如 (not 1>1) and 2>1
+
+———————————————————————————————————
+逻辑运算 between
+a between b and c 就是 b<=a and a<=c，是闭区间，这里and用来表示区间
+返回布尔值
+
+———————————————————————————————————
+逻辑运算 any = some 
+x < any (subquery) 
+subquery返回单列集，必须括起来。判断x是否小于集合中任意元素
+如 2 > any (select id from student)
+比较符可以是 < <= = > >= != !< !>
+返回布尔值
+
+———————————————————————————————————
+逻辑运算 all
+x < all (subquery)
+与any同理，小于集合中所有元素
+返回布尔值

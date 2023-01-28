@@ -1,0 +1,8 @@
+数组
+chunk 分割数组（为子数组）
+concat 合并到一个数组
+compat 去除假值（false,null,0,"",undefined,NaN）
+
+difference 两数组作差，去除前一组里的后一组的值，但不唯一化
+differenceBy 先用一元函数映射，按映射对两数组作差
+differenceWith 用二元比较函数作差

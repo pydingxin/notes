@@ -1,0 +1,158 @@
+操作[]byte的库，与strings同构
+
+比较
+# bytes.Compare = strings.Compare
+# bytes.Equal   //同len同内容
+# bytes.EqualFold = strings.EqualFold
+
+包含
+# bytes.Contains = strings.Contains
+# bytes.ContainsAny = strings.ContainsAny
+# bytes.CongtainsRune = strings.ContainsRune
+
+# bytes.Count = strings.Count
+
+分割
+# bytes.Cut = strings.Cut
+# bytes.Fields //空白域分隔为子串
+# bytes.FieldsFunc = strings.FieldFunc
+
+# bytes.Split = strings.Split
+# bytes.SplitN = strings.SplitN
+# bytes.SplitAfter = strings.SplitAfter
+# bytes.SplitAfterN = strings.SplitAfterN
+
+连接
+# bytes.Join = strings.Join
+
+头尾
+# bytes.HasPreifx = strings.HasPrefix
+# bytes.HasSuffix = strings.HasSuffix
+
+# bytes.TrimPrefix = strings.TrimPrefix
+# bytes.TrimSuffix = strings.TrimSuffix
+
+查找
+# bytes.Index = strings.Index
+# bytes.IndexAny = strings.IndexAny
+# bytes.IndexByte = strings.IndexByte
+# bytes.IndexFunc = strings.IndexFunc
+# bytes.Rune = strings.Rune
+# bytes.LastIndex = strings.LastIndex
+# bytes.LastIndexAny = strings.LastIndexAny
+# bytes.LastIndexByte = strings.LastIndexByte
+# bytes.LastIndexFunc = strings.LastIndexFunc
+
+映射
+# bytes.Map = strings.Map
+# bytes.ToLower = string.ToLower
+# bytes.ToUpper = strings.ToUpper
+
+重复
+# bytes.Repeat = strings.Repeat
+
+替换
+# bytes.Replace = strings.Replace
+# bytes.ReplaceAll = strings.ReplaceAll
+
+修剪
+# bytes.Trim = strings.Trim
+# bytes.TrimSpace = strings.TrimSpace
+# bytes.TrimFunc = strings.TrimFunc
+
+# bytes.TrimLeft = strings.TrimLeft
+# bytes.TrimLeftFunc = strings.TrimLeftFunc
+
+# bytes.TrimRight = strings.TrimRight
+# bytes.TrimRightFunc = strings.TrimRightFunc
+
+# bytes.TrimPrefix = strings.TrimPrefix
+# bytes.TrimSuffix = strings.TrimSuffix
+
+
+类型转换
+# bytes.Rune([]byte)[]rune
+
+================================================================
+
+以上都是数据操作，我们不仅要操作，还要读写
+这部分接口不是bytes库接口，也不绑在[]byte上，而是绑在Buffer类上。
+
+bytes.Buffer 底层是一个 []byte，绑定了很多方法
+它提供了读写内存的手段，提高了通过[]byte控制内存的能力
+
+--------------------
+有三种构建方法：
+# var b bytes.Buffer //声明即可用
+
+# bytes.NewBuffer(buf []byte) *Buffer
+接管buf作为底层数据，不应再手动使用buf
+
+# bytes.NewBufferString(s string) *Buffer
+用s的数据构造一个Buffer，并不接管s的内存
+
+--------------------
+# b.Cap()           底层slice的容量
+# b.Len()           底层slice的长度
+# b.Grow(n int)     底层slice增加n个容量
+# b.Reset()         清空数据，len直接置为0
+# b.Truncate(n int) 截为n字节，len直接置为n
+--------------------
+
+# b.Write(p []byte) (int,error)
+写入一个切片，b←p
+写入b时，b自增长，所以总能写入，error总是nil
+
+# b.WriteByte(c byte)error
+写入一个字节
+
+# b.WriteRune(r rune)(int,error)
+写入一个unicode码点
+
+# b.WriteString(string)(int,error)
+写入一个string
+
+--------------------
+
+# b.WriteTo(w io.Writer) (int64,error)
+b→w
+
+# b.ReadFrom(r io.Reader) (int64,error)
+b←r
+
+--------------------
+Buffer就像流一样，已经读过的数据，不应再读。
+读时，若有数据error为nil，否则为io.EOF
+所以它内部也有位置计数，能记住上次读到哪里了。
+所以，以下读取操作，都从上次结束位置开始：
+
+# b.Read(p []byte) (int,error)
+读出 b→p ，最多len(p)字节，返回真实字节数
+
+# b.ReadRune() (rune,size int, error)
+读出个unicode码点
+
+# b.ReadByte() (byte,error)
+读取下一个字节
+
+# b.ReadBytes(delim byte) ([]byte,error)
+读出一段数据，以delim为结尾，可用于读一行
+
+# b.ReadString(delim byte) (string,error)
+同上，但返回string
+
+--------------------
+
+# b.String() string
+未读的数据，返回为string
+
+# b.Bytes() []byte
+未读的数据，返回为slice
+--------------------
+# b.UnreadByte()
+# b.UnreadRune()
+读过头，可以回退一个字节或字符
+
+================================================================
+bytes.Reader []byte的只读类
+Buffer是独立的接口，而Reader绑的是io库规定的接口，类似文件，能调整offset之类

@@ -1,0 +1,110 @@
+------------------------------------------------------------
+
+可以默认用主键查找，但这比较含糊，还是指定要查找的列比较好。
+
+var one Man
+var all []Man
+注意字段名都得是小写的真实表名
+
+
+db.Find(&one, "name = ?", "dingxin")    //查一个
+db.Find(&all, "name = ?", "dingxin")    //查所有
+
+Find查不到时，不会error，而是返回空数据
+
+------------------------------------------------------------
+可以使用各种条件，和手写sql区别不大
+db.Find(&all, "name <> ?", "dingxin")
+db.Find(&all, "name in ?", []string{"dingxin","jilimei"})
+db.Find(&all, "name like ?", "%ing%")
+db.Find(&all, "name = ? and age = ?", "dingxin",33)    
+
+------------------------------------------------------------
+配合其他方法
+db.Order("name desc").Find(&users)  //排序
+db.Limit(10).Find(&users)           //加limit
+db.Limit(10).Offset(5).Find(&users) //加offset
+
+还有很多其他方法，比如group join之类
+
+------------------------------------------------------------
+要指定库表，可以用Model()对指针反射，也可以直接用Table()指定表名，是等价的。
+db.Model(&Man{}).Find(&x) = db.Table("men").Find(&x)
+
+------------------------------------------------------------
+db的方法都是链式调用的，db.XX()绝大部分方法返回的还是db
+比如永久开启debug：db= db.Debug()
+比如指定一个库表：mandb:= db.Model(&Man{})
+
+------------------------------------------------------------
+智能选择字段
+如果不需要查表中所有字段，可以定义较小的子结构体，如
+    type LittleMan struct{ Name string }
+    var x LittleMan
+    db.Model(&Man{}).Find(&x)
+
+就实现了只能选择字段，其中
+.Find(&x) 指定字段，构造了 select men.name; .Model(&Man{}) 指定表，构造了 from men
+
+也可以查找全部，所有逻辑都一样
+    var x []LMan
+	db.Model(&Man{}).Find(&x)
+
+可见，Find可以作用于结构体（切片）指针、子结构体（切片）指针，非常弹性。
+
+------------------------------------------------------------
+.Pluck()取出表中某一列
+    var names []string
+    db.Model(&Man{}).Pluck(&names)
+但它不能按条件取出，有需要可以定义单列子结构体，按条件查询
+
+------------------------------------------------------------
+.Count()查符合的个数
+    mandb := db.Model(&Man{})
+    var cnt int64                                   //必须是这个类型
+    mandb.Count(&cnt)                    //总数目
+    mandb.Where("age>?", 33).Count(&cnt) //条件数目
+    mandb.Distinct("name").Count(&cnt)   //distinct 数目
+    mandb.Group("name").Count(&cnt)      //聚合的数目
+
+------------------------------------------------------------
+增删查改，查是第一位的，根据查询结果，看怎么insert/update/delete
+update/delete自然隐含了查找，但insert往往也需要查找
+一般不能简单insert，而是有两种逻辑：selec-sert 和 selec-up-sert
+这由FirstOrCreate()实现。
+
+FirstOrCreate()
+用法一偏重读库：selec-sert 即 selected? gotdata : insert
+    user := Man{Name: "dingxin", Age: 33}
+	res := db.Where(Man{Name: user.Name}).FirstOrCreate(&user)
+	if res.RowsAffected == 0 {
+		fmt.Println(user)
+	}
+
+先根据Where查询，根据res.RowsAffected==0判断是否有结果
+若有结果，放到user里，user原本的数据就覆盖了，res.RowsAffected==0
+若无结果，把user给insert进去，res.RowsAffected==1
+
+
+用法二偏重写库：selec-up-sert 即 selected? update : insert
+    user := Man{Name: "dingxin", Age: 33}
+	res := db.Where(Man{Name: user.Name}).Assign(user).FirstOrCreate(&user)
+就加了一个Assign()，强制写回数据库。
+先根据Where查询，有则update无则insert，res.RowsAffected永远是1
+
+------------------------------------------------------------
+以下功能很好，但平时不太用得到：
+查询时，可以嵌套子查询，生成复杂语句
+查询结果不生成struct，而是map或map数组
+查询结果按行迭代
+查询结果分批处理
+查询钩子
+预定义各种查询条件，用Scope()组合
+用hints提示指定查询使用的索引
+
+Select 直接自定义要查的东西
+.Select("count(distinct(name))")
+
+Where、Or 构造较长的查询条件：
+.Where("name = ?", "jinzhu").Or("name = ?", "jinzhu 2")
+

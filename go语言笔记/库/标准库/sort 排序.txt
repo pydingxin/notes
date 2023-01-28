@@ -1,0 +1,89 @@
+sort库目前有5套排序/查找方案
+interface, []any, []string, []int, []float64
+
+---------------------------------------------------------------
+通用排序，较为底层
+
+#1 sort.Sort(data interface)
+
+通用函数，数据要绑定data规定的3个函数，即Less/Len/Swap
+原地排序，不稳定
+不适合日常使用
+
+#2 sort.Stable(data interface)   //Sort的稳定版
+#3 sort.IsSorted(data interface) //是否已从小到大排序
+
+---------------------------------------------------------------
+slice排序
+
+Sort的封装，只用于切片排序，都以sort.Slice..开头
+对所有切片来说，Len/Swap都一样，自定义Less即可。
+
+#1 sort.Slice(x any, less func(i,j int)bool)
+原地不稳定
+
+    sort.Slice(arr, func(i,j int)bool{
+        return arr[i].age<arr[j].age
+    })
+
+
+#2 sort.SliceStable(any, func(i,j int)bool)
+原地稳定
+
+#3 sort.SliceIsSorted(any, func(i,j int)bool)
+判断，复杂度O(n)，所以先判断一下还是有好处的。
+
+
+二分查找，返回下标
+#4 sort.Search(len int, judge func(int)bool) int
+
+比如查找arr 
+    idx:=sort.Search(len(arr), func(i int)bool{
+        return arr[i]>=8
+    })
+
+注意：
+1、judge是个闭包，不必显式传入arr，这有点反直觉
+2、arr已排序，分界点之前都false，之后都true
+3、返回第一个为true的下标
+4、如未找到，返回len(arr)，既可插入的位置，而非-1
+
+---------------------------------------------------------------
+
+[]int排序
+
+都以sort.Ints...开头
+对数组切片，什么也不必定义，直接用
+
+#1 sort.Ints([]int)  //增序排列
+#2 sort.IntsAreSorted([]int)bool //是否增序
+
+#3 sort.SearchInts(a []int, x int)int
+在增序切片a中，查找>=x的第一个数的下标，即可插入x的第一个位置
+
+---------------------------------------------------------------
+
+[]string排序
+
+Sort的封装，都以sort.Strings..开头
+对string来说，Len/Swap/Less都一样，不需要自定义什么，直接用
+
+#1 sort.Strings([]string)    //增序
+#2 sort.StringsAreSorted([]string)bool   //是否增序
+
+#3 sort.SearchStrings([]string, x string)int
+在增序切片中，查找>=x的第一个数的下标，即可插入x的第一个位置
+
+---------------------------------------------------------------
+[]float64排序
+或许针对浮点数有专门优化，这是很可能的
+
+#1 sort.Float64s([]float64)
+#2 sort.Float64sAreSorted([]float64)bool
+#3 sort.SearchFloat64s( []float64, float64)int
+
+
+
+
+
+

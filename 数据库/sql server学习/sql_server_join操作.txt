@@ -1,0 +1,109 @@
+table score:
+id	score
+2	97
+3	98
+4	99
+______________________________________________
+table student:
+id	name
+1	张三
+2	李四
+3	王五
+______________________________________________
+join有四种：inner、outer【left、right、full】
+join是两个表横向并列
+______________________________________________
+inner join交叉：
+select * from 
+student as A  --语法上as可省略
+inner join    --join默认为inner，inner可省略
+score as B
+on A.id=B.id;
+↓
+id	name	id	score
+2	李四	2	97
+3	王五	3	98
+______________________________________________
+left join左表完整，右表往上填：
+select * from 
+student A
+left join 
+score B
+on A.id=B.id
+↓
+id	name	id	score
+1	张三	NULL NULL
+2	李四	2	97
+3	王五	3	98
+______________________________________________
+right join右表完整，左表往上填：
+select * from 
+(
+	student A
+	right join 
+	score B
+	on A.id=B.id
+)
+↓
+id	name	id	score
+2	李四	2	97
+3	王五	3	98
+NULL NULL	4	99
+______________________________________________
+full join左右表都完整，相同行同行：
+select * from 
+student A
+full join score B
+on A.id=B.id
+↓
+id	name	id	score
+1	张三	NULL NULL
+2	李四	2	97
+3	王五	3	98
+NULL NULL	4	99
+______________________________________________
+cross join 为笛卡尔积
+select * from
+student A
+cross join 
+score B
+______________________________________________
+
+结果保存为新表
+select 
+	A.id,	--新表的列
+	A.name,
+	B.score
+into newtba --新表
+from (		--临时表
+	student A
+	inner join 
+	score B
+	on A.id=B.id
+)
+______________________________________________
+
+求和，作为变量t返回
+select sum(id) as t  --as 是命名列名
+from score
+
+______________________________________________
+求总行数
+select count(*) from score
+count(*) 是个特殊形式，把NULL也计入
+
+如果指明列名，就不会计入NULL，此时还可以指明不重复的个数
+select count(distinct A.id) from
+student A
+full join score B
+on A.id=B.id
+
+______________________________________________
+通配符查找 
+like _为一个字符,%为0或多个字符
+
+select *
+from
+student A
+where A.name like '_五'
+______________________________________________

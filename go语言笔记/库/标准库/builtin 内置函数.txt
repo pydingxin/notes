@@ -1,0 +1,54 @@
+# append(arr []Type, elems ...Type)[]Type
+往切片里插入元素，如 arr = append(arr,2,3,4)
+如果超过cap，重新构造arr并返回；若未超过直接返回arr
+
+也可以 a=append(a,b...),用...把b展开，这样比copy好
+
+# copy(dst, src []Type)int
+切片间复制，dst不会重新分配，原地复制
+复制个数为 min(len(dst),len(src))，这也是返回值
+copy与append不同，根据len操作，与cap毫无关系。
+
+一个特例是 copy([]byte, string)
+
+# cap(x)int  // 切片/通道的元素最大容量
+
+# len(x)int  
+string  字节数
+chan    未读取的元素数
+slice/数组/map  当前元素数
+
+
+# close(chan<- Type)
+关闭通道[双向/只写]，不能关闭只读通道。
+关闭后，仍可读，读完后可触发阻塞效应。
+
+# delete(map[Type1]Type2, key Type1)
+删除哈希表的键 delete(m,'dingxin')
+
+# new(Type) *Type
+分配内存并重置为零，可分配简单变量和struct
+new不能初始化，要用make
+怎么回收？
+
+# make(Type, ... int)Type
+构建 slice/map/chan，可以初始化复杂结构，比new强
+1、make([]int, len [,cap]) 
+默认cap就是len，可指定cap，若将来有append，最好大一点
+
+2、make(chan int, cap)
+
+3、make(map[string]string [,cap]) 
+map可以自增长，也可指定元素容量，有时也有用。
+
+
+# complex(r,i FloatType) ComplexType //构造一个复数
+# real(ComplexType)FloatType         //复数的实部
+# imag(ComplexType)FloatType         //复数的虚部
+
+# print(args ...Type)
+# println(args ...Type)
+
+# panic(any)    //抛出恐慌
+//在defer里停止恐慌，当前函数[可以说是]正常返回
+# recover()any  

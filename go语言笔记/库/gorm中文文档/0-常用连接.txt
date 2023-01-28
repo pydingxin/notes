@@ -1,0 +1,30 @@
+------------------------------------------------------------------------------------
+连接数据库，这是固定的，没啥好说的
+
+import(
+    "gorm.io/driver/mysql"
+    "gorm.io/driver/sqlserver"
+    "gorm.io/gorm"
+)
+
+func connect_mysql() *gorm.DB {
+    dsn := "root:dapingyi890@tcp(10.178.79.130:3306)/hs_sj?charset=utf8mb4&parseTime=True&loc=Local"
+    db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+    if err != nil {
+        panic(err)
+    } else {
+        fmt.Println("mysql连接成功")
+    }
+    return db
+}
+
+func connect_mssql() *gorm.DB {
+    dsn := "sqlserver://sa:dingxin@localhost:1433?database=test"
+    db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
+    if err != nil {
+        panic(err)
+    } else {
+        fmt.Println("mssql连接成功")
+    }
+    return db
+}

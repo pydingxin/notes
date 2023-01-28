@@ -1,0 +1,46 @@
+--------------------------------------------------------------
+
+最好办法是Where配合Delete删除
+    man.Where("name=?", "big").Delete(&Man{})
+Delete(&Man{})用反射构成一小段语句：delete from men
+
+--------------------------------------------------------------
+gorm默认不允许无条件全局删除
+db.Where("1=1").Delete(&Man{})
+
+--------------------------------------------------------------
+软删除
+如果struct中包含一个gorm.DeleteAt类型的字段，则会启用软删除功能，比如gorm.Model里就有这个字段
+
+软删除有两个特点：
+1、删除没有真的delete，而是update删除时间
+2、所有where语句自动加上 "AND deleted_at IS NULL"，操作的都是未删除的数据行
+
+--------------------------------------------------------------
+用Unscoped()查找
+db.Unscoped().Where("age>30").Find(&users)  //所有软删除的数据也会找到
+
+用Unscoped()删除
+db.Unscoped().Where("age>30").Delete(&Man{}) //真删除，而不是update 
+
+--------------------------------------------------------------
+子结构体 & 软删除
+子结构体一般不包含gorm.DeleteAt，需要正确的方法触发软删除
+    type LittleMan struct {
+        Name string
+        Age int
+    }
+    var allLittle []LittleMan
+    var allMan []Man
+
+    db.Model(&Man{}).Find(&allLittle)   //检测到软删除
+    db.Table("men").Find(&allLittle)    //检测不到
+    db.Model(&Man{}).Find(&allMan)      //检测到
+    db.Table("men").Find(&allMan)       //检测到
+可见，没用Model()检测模型，子结构体里也也没有软删除字段，就不会触发软删除，查询结果就是错误的。
+所以，尽量不要用Table()，很容易出问题。
+
+
+--------------------------------------------------------------
+软删除字段类型不一定是time.Time
+可以是数字时间戳，或bool flag

@@ -1,0 +1,16 @@
+range 
+可以遍历 array/slice/string/map[无序]/channel...
+不能遍历 struct
+
+用于定义两个局部变量k,v，访问数据。常用的形式：
+	for k,v:= range x{
+		//定义k v
+	}
+	for k:= range x{
+		//只定义k
+	}
+	for _,v:= range x{
+		//只定义v
+	}
+
+

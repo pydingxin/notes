@@ -1,0 +1,24 @@
+1、if语句
+
+if condition{
+	...
+}else{
+	...
+}
+
+if后边精简掉了圆括号
+
+//---------------------------------------------------
+2、switch语句
+switch expression{
+	case val1:
+		...
+	case val2:
+		...
+	default:
+		...
+}
+
+c/c++的switch默认串联，一旦匹配，必须手动break。而golang的switch默认并联，每个case前自带break，可以用fallthrough取消当前case的break
+case可以多值匹配 case 1,2,3:
+//---------------------------------------------------

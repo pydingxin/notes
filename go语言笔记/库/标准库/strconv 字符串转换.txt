@@ -1,0 +1,68 @@
+strconv = string_conversion
+
+--------------------------------------------------
+
+字符串 ↔ 整数
+
+# strconv.Atoi(string)(int,error)
+字符串 → 十进制数
+
+# strconv.Itoa(int)string
+十进制数 → 字符串
+
+关于字符和数字互转，下面几个要指定进制或位数，不好用
+# strconv.ParseInt
+# strconv.ParseUint
+# strconv.FormatInt
+# strconv.FormatUint
+
+--------------------------------------------------
+
+字符串 ↔ 布尔值
+
+# strconv.FormatBool(bool)string
+布尔→字符串 "true"/"false"
+
+# strconv.ParseBool(s string)(bool,error)
+字符串→布尔，s可为：
+1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False
+
+
+--------------------------------------------------
+
+字符串 ↔ 浮点数
+浮点数较复杂，因为射击科学计数法、位数等
+
+# strconv.ParseFloat(string,int)(float64,error)
+位数可为32/64,但最好用默认的64
+
+# strconv.FormatFloat(float64,fmt byte, prec,bitSize int)string
+
+fmt = 'b'/'e'/'E'/'f'/'g'/'G'/'x'/'X'/
+e/E 是科学计数法，g/G是正常的方式
+
+这两个可以固定：prec=-1，bitSize=64
+
+--------------------------------------------------
+quote相关，这部分和转义字符有关系
+
+# strconv.Quote(s string)string
+用双引号括起来，特殊字符都被反斜线转义
+s用javascript语法，用``引起来
+strconv.Quote(`"\g`) → \"\\g
+
+# strconv.QuoteRune
+# strconv.QuoteRuneToASCII
+# strconv.QuoteRuneToGraphic
+# strconv.QuoteToASCII
+# strconv.QuoteToGraphic
+# strconv.QuotePrefix
+# strconv.Unquote
+# strconv.UnquoteChar
+--------------------------------------------------
+append相关，这部分转换的字符串，附加到字符切片
+
+因为字符串不能直接操作，字符切片也是一条思路
+b:= []byte("dingxin")
+b= strconv.AppendInt(b, -42, 10)
+b就成了[]byte("dingxin-42")

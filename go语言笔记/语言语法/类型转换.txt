@@ -1,0 +1,3 @@
+typeName(varx)
+
+golang不接受隐式类型转换，强类型有助于检查错误

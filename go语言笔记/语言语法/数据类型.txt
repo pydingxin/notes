@@ -1,0 +1,49 @@
+基础类型：
+bool uint/int float32/float64 string(必须双引号) 
+
+更精细的：
+uint8 uint16 uint32 uint64
+int8 int16 int32 int64
+
+处理字符的2个数字类型别名：
+	byte（uint8，用于处理ascii字符，最长只能处理1字节）
+	rune（int32，用于处理unicode字符，最长能处理4字节）
+如 s:="a语言"
+	转为byte数字数组：[]byte(s) → [103 111 232 175 173 232 168 128]
+	转为rune数字数组：[]rune(s) → [97 35821 35328]
+golang默认使用unicode，所以平常应该用rune
+
+单引号的字符，会识别为rune数字，也就是unicode编号
+双引号的字符串，才会被解码为字符串
+
+派生类型包括：
+	指针 pointer
+	数组 array
+	结构体 struct
+	通道 channel
+	函数 func //函数也是数据
+	切片 slice
+	接口 interface
+	map
+
+指针类型是这么写的
+var y *int = &x
+var y * int = &x
+在type前加一个星号即可，可以理解为*和int的组合，也可以把*int视为一个单独的类型
+
+--------------------------------------------------
+字符切片比较特殊，其他切片可以列举元素：
+[]int{1,2}
+字符切片不好列举，不用花括号而是圆括号：
+[]byte("ding")
+[]rune("丁鑫")
+
+string的下标是字节下标，不能取中文字符
+[]rune的下标是字符下标，能取出中文
+
+
+对中文，要用[]rune编辑处理，需要展示才用string([]rune)
+
+两种定义type的语法
+type a=b
+type a b

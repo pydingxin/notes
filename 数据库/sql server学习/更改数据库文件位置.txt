@@ -1,0 +1,3 @@
+分离 & 附加
+按照【https://www.dongchuanmin.com/archives/669.html】
+分离是把一个库停用，附加是把mpf文件加载为数据库。分离后把mpf文件放到另一个位置，再附加上去就可以。

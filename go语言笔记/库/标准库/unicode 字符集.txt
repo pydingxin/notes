@@ -1,0 +1,72 @@
+unicode编码 只是 编号和字符的映射表。
+编号具体的存储方式有两种，utf8 和 utf16。
+
+较小字符集（如ASCII）一次性进入unicode
+较大字符集（如汉字）可以分批进入unicode，在unicode的编号中占多个区间。
+
+//--------------------------------------------------------------------
+
+表达一个连续的utf8范围，用：
+    type Range16 struct {
+        Lo     uint16
+        Hi     uint16
+        Stride uint16 // 步长
+    }
+表达一个连续的utf16的范围，用：
+    type Range32 struct {
+        Lo     uint32
+        Hi     uint32
+        Stride uint32 // 步长
+    }
+
+一个unicode字符集，可能占用多个连续范围，并且有utf8/utf16两种存储方式。
+表达一个unicode字符集，用RangeTable：
+    type RangeTable struct {
+        R16         []Range16
+        R32         []Range32
+        LatinOffset int // R16 中 Hi <= MaxLatin1 的条目数。
+    }
+//--------------------------------------------------------------------
+
+Scripts是一个语言字符集的哈希表
+unicode.Scripts = map[string]*RangeTable{}
+包含了一百多种语言，汉语为unicode.Scripts["Han"]
+
+还有其他字符集的定义，比如Properties是按功能来分的
+unicode.Properties["White_Space"]就是空白符的字符集
+
+//--------------------------------------------------------------------
+rune 是一个unicode字符，用单引号，如'定'，也可以是编号，如22302
+
+# unicode.In(rune, ...*RangeTable)bool
+该字符 是否属于 这多个字符集
+
+# unicode.Is(*RangeTabe, rune)bool
+该字符 是否属于 该字符集
+
+# unicode.IsControl(rune)bool
+该字符 是否属于 控制字符集
+
+# unicode.IsDigit(rune)bool
+该字符 是否属于 十进制数字集
+
+# unicode.IsNumber(rune)bool
+该字符 是否属于 数字集，包括罗马数字等
+
+# unicode.IsGraphic(rune)bool
+该字符 是否属于 可打印字符集，如字母 符号 数字 标点 标记 空格
+
+# unicode.IsLetter(rune)bool
+该字符 是否属于 英语字母集
+
+# unicdoe.IsLower(rune)bool
+该字符 是否属于 小写字母集
+
+# unicdoe.IsUpper(rune)bool
+该字符 是否属于 大写字母集
+
+# unicode.IsSpace(rune)bool
+该字符 是否属于 空白字符集
+
+# unicode.IsPunct(rune)bool
+该字符 是否属于 标点符号集

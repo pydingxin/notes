@@ -1,0 +1,32 @@
+
+
+golang声明变量使用后置类型，类似typescript、SQL
+
+声明：
+var x int
+var x,y,z int
+var{
+	x int
+	y int
+}
+
+赋值声明：
+var x int =1	//typescript风格
+var x=1			//javascript风格
+x:=1			//go风格
+var{
+	x int =1
+	y int =2
+}
+
+同时赋值：
+var x,y,z int = 1,2,3
+var x,y,z =1,2,"3"
+x,y,z:=1,2,3
+
+同时赋值可用于交换值：
+a,b=b,a
+
+同时赋值是语言本身提供的机制。还有一个全局只写变量_，它不能读，也算是一种机制
+
+var和const用法相同

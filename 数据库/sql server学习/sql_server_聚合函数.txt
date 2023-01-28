@@ -1,0 +1,20 @@
+聚合函数对一组值执行计算，并返回单个值。 除了 COUNT(*) 外，聚合函数都会忽略 Null 值。 聚合函数经常与 SELECT 语句的 GROUP BY 子句一起使用，进行聚合搜索。
+
+包括：
+APPROX_COUNT_DISTINCT
+AVG
+CHECKSUM_AGG
+COUNT
+COUNT_BIG
+GROUPING
+GROUPING_ID
+MAX
+MIN
+STDEV
+STDEVP
+STRING_AGG
+SUM
+VAR
+VARP
+
+——————————————————————————————————————

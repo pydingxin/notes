@@ -1,0 +1,36 @@
+类型断言
+1、断言变量x是typeX类型：value,ok:=x.(TypeX)，返回动态值和断定结果
+2、可以简化为 value:=x.(TypeX)，但断定失败会panic
+3、类型断言配合switch，像处理值一样处理类型：
+    switch x.(type){
+        case int:
+        case string:
+    }
+
+-------------------------------------------------------------------
+有时需要像处理数据一样处理变量的类型。
+比如js里，用typeof直接获取类型字符串，用for..in遍历对象字段，在c/c++里就做不到这种事，无法在运行时判断变量是什么类型，不知道里面有什么。
+
+go不能range一个struct，所以也面临这个问题，但可通过reflect包解决。
+这基本就是反射，多态是实例化为不同类型；反射是判断其类型，是相对概念。
+多态是用接口实现的，一般接口变量才需要反射。
+
+-------------------------------------------------------------------
+比如对struct：
+    type Resident_info struct {
+        CardNo  string
+        Name    string
+        Phone   string
+        Address string
+    }
+反射打印出一个struct变量的信息：
+    func structObjMsg(x interface{}){
+        vo:= reflect.ValueOf(x) //具体值从Value中获取
+        to:= reflect.TypeOf(x)  //类型和字段名从Type中获取
+
+        for i,n:=0,to.NumField(); i<n; i++{
+            fkey:=to.Field(i).Name
+            fval:=vo.FieldByName(fkey)  //用名字取具体值
+            fmt.Println(fkey,fval)
+        }
+    }

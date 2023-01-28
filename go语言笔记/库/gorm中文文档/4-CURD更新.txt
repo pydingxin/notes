@@ -1,0 +1,39 @@
+
+更新主要就是Update/Updates这2个方法，一个单列一个多列
+其实只用Updates就行
+
+以下令 mandb:= db.Model(&Man{})
+
+--------------------------------------------------------
+Update()更新单列，第一个参数必须是字符串列名
+mandb.Where("name=?", "dingxin").Update("age",50)   /可能涉及很多行
+
+--------------------------------------------------------
+Updates()更新多列，参数是struct/map
+mandb.Where("name=?", "dingxin").Updates(Man{Name: "Udingxin", Age: 69})
+
+Updates不更新非零值，不指明的列，不必担心丢失数据
+mandb.Where("name=?", "dingxin").Updates(Man{Name: "Udingxin"})  //不会设置库表中的age列
+
+如果用Select指明要set的列，那么空值也会被写进去
+mandb.Where("name=?", "dingxin").Select("age").Updates(Man{Name: "Newdingxin"}) //age被更新为0
+
+--------------------------------------------------------
+gorm禁止全局更新，要更新所有行，要有条件：
+mandb.Where("1 = 1").Update("name", "jinzhu")
+或者配置开启全局更新
+AllowGlobalUpdate: true
+
+
+--------------------------------------------------------
+gorm.Expr()构造表达式/expression更新
+
+1、Update用表达式更新单列
+    mandb.Where("name=?","dingxin").Update("age", gorm.Expr("age*?+?",3,4))
+//set age=age*3+4
+
+2、Updates()多列表达式更新
+	mandb.Where("name=?", "dingxin").Updates(map[string]interface{}{
+		"name": gorm.Expr("name+?", "niubi"),
+		"age":  gorm.Expr("age+?", 3),
+	})

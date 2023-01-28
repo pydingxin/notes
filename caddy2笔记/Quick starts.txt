@@ -1,0 +1,69 @@
+-------------------------------------------------------------------------
+API配置
+1、post配置json
+curl localhost:2019/load -H "Content-Type: application/json" -d @caddy.json
+
+2、可以配置很多网站：
+{"apps": {"http": { "servers": {
+                "hello": {
+                    "listen": [":2015"],
+                    "routes": [
+                        {
+                            "handle": [{
+                                "handler": "static_response",
+                                "body": "Hello, world!"
+                            }]
+                        }
+                    ]
+                },
+                "bye": {
+                    "listen": [":2016"],
+                    "routes": [
+                        {
+                            "handle": [{
+                                "handler": "static_response",
+                                "body": "Goodbye, world!"
+                            }]
+                        }
+                    ]
+                }
+}}}}
+
+-------------------------------------------------------------------------
+在有的系统，使用http默认的80、https默认的443 这种低序列端口可能需要权限，建议使用更高的端口。
+有时需要更改防火墙设置。
+
+caddy默认所有站点（包括localhost）都使用https协议
+
+-------------------------------------------------------------------------
+Caddyfile配置
+1、也可以配置多个站点：
+localhost {
+    respond "Hello, world!"
+}
+localhost:2016 {
+    respond "Goodbye, world!"
+}
+
+2、也可以post配置：
+curl localhost:2019/load -H "Content-Type: text/caddyfile" --data-binary @Caddyfile
+
+3、caddy reload也可以
+
+-------------------------------------------------------------------------
+配置的respond仅用于测试，要去掉，不然该站点的所有请求都返回这个respond
+
+-------------------------------------------------------------------------
+获取静态文件/浏览目录
+在Caddyfile里
+file_server 开启静态文件功能
+root * ./root 指定某个文件夹为根目录
+file_server browse 开启浏览目录文件夹功能，文件服务器可能需要这个功能
+
+-------------------------------------------------------------------------
+反向代理
+转发本站点所有请求到8000端口的服务：
+reverse_proxy :8000 
+
+只转发某种格式的请求
+reverse_proxy /api/* :8000

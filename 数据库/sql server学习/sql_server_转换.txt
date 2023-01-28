@@ -1,0 +1,8 @@
+cast(3 as nvarchar(20)) = convert(nvarchar(20),3)
+cast & convert 用于转换类型，很多时候需要用到这玩意，比如
+
+错误：print 'a'+3+'b'
+
+正确：print 'a'+cast(3 as nvarchar(10))+'b'
+
+正确：print 2+cast('3' as int)

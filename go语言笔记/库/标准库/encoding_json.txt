@@ -1,0 +1,62 @@
+# json.Marshal(v any) ([]byte,error)
+变量→json字符串
+
+例1、struct 字段名必须大写，否则无法转换
+type user struct{
+    Name string
+    Age string
+}
+json.Marshal(user{"ding","33"}) 
+→ {"Name":"ding","Age":"33"}
+
+例2、map
+json.Marshal(map[string]string{"name":"ding","age":"33"})
+→{"age":"33","name":"ding"}
+
+注：map/struct转为json后长得差不多
+
+例3、slice/array
+json.Marshal([]string{"ding","33"})
+→ ["ding","33"]
+
+为了解决struct字段名的问题，struct支持json标签
+
+例4、struct-json标签重命名json的键
+type man struct{
+    Name string `json:"name"`
+    Age int `json:"age"`
+}
+json.Marshal(man{"dingxin",33})
+→ {"name":"ding","age":33}
+
+json标签的辅助功能
+`json:"-"` 该字段不编入json
+`json:"name,omitempty"` 该字段如果为空，不编入json
+
+
+# json.MarshalIndent(any, prefix, indent) ([]byte,error)
+生成美观的json字符串，加换行符，每行加prefix，每级加一个indent
+
+例5、美观的json字符串
+json.MarshalIndent(man{"dingxin",33},"","  ")
+→ {
+  "name": "dingxin",
+  "age": 33
+}
+
+# json.Unmarshal(data []byte, ptr any)error
+如 json.Unmarshal(data, &arr)
+
+对json字符串data，转为变量，存在堆里，指针赋给ptr
+解为struct时，字段名/标签名要符合json描述
+一个json可同时解为struct和map，因为它们的json长得一样
+
+# json.Valid([]byte) bool
+是否是可用的json字符串
+
+# json.HTMLEscape(*bytes.Buffer, []byte)
+把字符串中的 < > & 等疑似html标签的字符都转义
+以便json内容能放在html里
+
+# json.Compact
+压缩空间，删除json字符串里的空白符

@@ -1,0 +1,43 @@
+1、mysql开启账号远程登录功能，直接在表mysql.user把账号的localhost改为%，重启服务。
+select user,host,plugin from user;
+update user set host="%" where user.user='root';
+
+2、在installer中安装mysql80时
+记得打开advanced opetion
+选择legacy登录，否则与mysql57登录方式不兼容，无法编程登录。
+
+3、SHOW CREATE TABLE tbname;可以查看完整的建表语句，可以用来重建表。
+
+4、用ibd文件恢复数据：
+首先 建库，建表结构
+然后 ALTER TABLE  tbname DISCARD TABLESPACE;
+然后 用户的库都有对应文件夹，把ibd文件复制到对应文件夹下
+然后 alter table tbname  import tablespace; 数据就有了
+
+5、into outfile 导出 excel
+select * from tb into outfile 'E:/x.xlsx'
+secure_file_priv规定了导出目录，默认是Uploads，可以查看:show variables like 'secure_file_priv';
+比如：select * from shi16 into outfile 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/shi16.txt';
+注意别用反斜杠，否则无法执行
+
+
+6、call命令调用存储过程
+call func(arg)
+
+6、导入csv
+mysql自带一个专门的导入工具 mysqlimport，速度秒杀navicat、workbench什么的，要正确设置参数。
+例：
+1、允许导入本地文件：登录后 SET GLOBAL local_infile = 'ON';
+2、新建表 sheng13
+3、mysqlimport -u root -p  --local  --fields-terminated-by=","   --lines-terminated-by="\r\n"   --use-threads=20 --ignore-lines=1 dx ./sheng13.csv
+
+8、迁移datadir
+services.msc 停止mysql服务
+show variables like 'datadir' 新建文件夹，拷贝过去
+修改新文件夹权限为完全控制
+修改Data父文件夹下my.ini的datadir
+重启服务
+
+9、重命名库
+mysql不能重命名库，rename database 不可用，
+可以rename table oldbase.tb to newbase.tb，类似剪切文件一样，剪切到新库里，然后删掉旧库。

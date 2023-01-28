@@ -1,0 +1,18 @@
+按框架给的格式来就行，首先搞定context
+
+# c.JSON(code int, x any)
+把变量ret序列化为json，返回为application/json
+ret可以是map/struct、array/slice，内部包含数字、字符串，这几样就够用了
+
+# c.Query(k) string
+获取get url里的键值，没有的就是空串
+
+# c.GetQuery(k) (v string, found bool)
+加上判定有无
+
+
+# c.Bind(&x) error
+当参数很多时，不便逐个获取，直接Bind到一个变量上
+如果是struct，在标签里用`form:"name"`指定名字
+
+

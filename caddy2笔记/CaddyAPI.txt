@@ -1,0 +1,32 @@
+-------------------------------------------------------------------------
+一个简单的json配置如下
+{
+    "apps": {
+        "http": {
+            "servers": {
+                "example": {
+                    "listen": [":2015"],
+                    "routes": [
+                        {
+                            "handle": [{
+                                "handler": "static_response",
+                                "body": "Hello, world!"
+                            }]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+
+post该json文件以在线修改配置
+curl localhost:2019/load -H "Content-Type: application/json" -d @caddy.json
+
+可以在线看到所有配置
+http://localhost:2019/config/
+
+也可以查看单独某个配置
+localhost:2019/config/apps/http/servers/example/routes
+-------------------------------------------------------------------------
+

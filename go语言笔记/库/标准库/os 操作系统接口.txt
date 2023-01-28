@@ -1,0 +1,235 @@
+常量
+(
+    //打开文件的模式
+    //这3个有且只有一个
+    os.O_RDONLY
+    os.O_WRONLY
+    os.O_RDWR
+
+    // 用|添加
+    os.O_APPEND //附加写入
+    os.O_CREATE //不存在则创建
+    os.O_EXCL   //创建时不能存在
+    os.O_TRUNC  //打开时清空
+    os.O_SYNC   //同步IO 啥意思？
+)
+
+(
+    文件偏移位置
+    os.SEEK_SET //即reset，文件头部
+    os.SEEK_CUR //当前位置
+    os.SEEK_END //文件尾部
+)
+
+(
+    分隔符
+    os.PathSeparator //路径分隔符
+    os.PathListSeparator //多个路径在一行的分隔符
+)
+
+os.DevNull //空设备
+
+================================================
+运行时
+
+# os.Environ()[]string
+所有环境变量
+
+# os.Getenv(string)string
+取某环境变量的值
+
+# os.LookupEnv(string) (string,bool)
+同上
+
+# os.Setenv(key,val)error
+# os.Unsetenv(key)  //用于defer
+
+# os.Clearenv()
+清空所有环境变量
+
+# os.Expand
+# os.ExpandEnv
+格式化含环境变量的字符串
+
+# os.Getpid()int
+进程号
+
+# os.Getwd()(string,error)
+当前目录
+
+# os.Chdir(string)error
+更改当前目录
+
+# os.Executable()
+当前运行的可执行文件
+
+# os.Exit(int)
+结束程序，返回状态[0,125]，一般0表正常结束
+
+# os.UserCacheDir()
+程序缓存文件夹，windows上就是AppData
+
+# os.UserConfigDir()
+程序配置文件夹，windows上就是AppData\Roaming
+
+# os.UserHomeDir()
+用户文件夹，即C:\Users\Administrator
+
+--------------------------------------------
+文件属性
+
+# os.Chmod(path string, fileMode) error
+修改文件模式
+
+# os.Chown(path, uid, gid)error
+修改文件归属（linux）
+
+# os.Chtimes(path, atime, mtime)
+修改文件的上次访问/修改时间
+
+# os.Hostname()(string,error)
+当前计算机用户
+
+# os.Lchown
+修改文件所属用户
+
+# os.Link
+创建快捷方式
+
+# os.Rename(oldpath,newpath)error
+重命名
+---------------------------------------------
+错误
+
+os 有些函数返回错误，返回的还要识别
+所以由搞了一些检测函数，看返回的什么错误
+
+# os.IsExist(error)bool
+错误：创建时已存在
+
+# os.IsNotExist(error)bool
+错误：操作时不存在
+
+# os.IsPermission(error)bool
+错误：无操作权限
+
+# os.IsTimeout(error)bool
+错误：超期
+---------------------------------------------
+创建
+
+# os.Mkdir(path string, perm FileMode)error
+创建单个文件夹，父文件夹必须存在
+perm必须是4位数字 如0777
+配合错误处理 写作：
+    err:=os.Mkdir(..)
+    if err!=nil && !os.IsExist(err){ log.Fatal(error) }
+对确实不该发生的错误，log.Fatal结束程序就完事了
+
+# os.MkdirAll(path, perm)error
+创建一串文件夹，父文件夹不必存在
+
+---------------------------------------------
+删除
+
+# os.Remove(path) error
+删除单个 文件/空文件夹
+
+# os.RemoveAll(path)error
+删除文件夹，和文件夹里包含的一切东西
+
+
+---------------------------------------------
+简单读写
+
+# os.ReadFile(path string) ([]byte, error)
+把整个文件读入内存的一个[]byte，并返回它
+
+# os.WriteFile(string, []byte, m FileMode)error
+存在则清空，不存在则创建[并指定文件模式m]
+
+# os.Truncate(path,size)
+把文件截断为size字节
+ps：Truncate和Append是相对概念
+
+---------------------------------------------------------------
+# os.ReadDir(path string)( []DirEntry, error)
+读取文件夹下的所有条目（文件或子文件夹）信息DirEntry
+
+DirEntry：
+type DirEntry interface {
+    Name() string
+    IsDir() bool
+    Type() FileMode
+    Info() (FileInfo, error)
+}
+
+其中 FileInfo 为：
+type FileInfo interface{
+    Name() string    //文件名
+    Size() int64     //字节数
+    Mode() FileMode  //使用模式 如-rw-rw-rw-
+    ModeTime() Time  //上次编辑时间
+    IsDir() bool     //是否文件夹
+}
+
+其中 FileMode 表示访问权限：
+type FileMode uint32
+如0777就是 -rwxrwxrwx，必须是4位数，开头的0不能少
+
+---------------------------------------------------------------
+
+# os.OpenFile(path, openmode, perm)(*File, error)
+广义的打开
+openmode是打开模式，三大模式之一，配合其他模式
+perm是访问权限，若文件存在就没啥用；若不存在，以此创建文件
+如 f,err:= os.OpenFile("a.txt", os.O_WRONLY|os.O_CREATE, 0666)
+
+# os.Open(path)(*File, error)
+狭义的，以只读模式打开
+
+# os.Create(path)(*File,error)
+创建新文件（因为期望是新文件，所以若存在则清空）
+读写模式
+
+# os.CreateTemp(dir, pattern)(*File,error)
+创建临时文件，读写模式，用pattern生成名字
+如 os.CreateTemp(".","t*.txt") 得到 t1575228938.txt
+
+---------------------------------------------------------------
+文件绑定函数
+# f.Fd( )uintptr  //unix文件描述符
+# f.Close() error
+# f.Name() string
+
+# f.Read(b []byte) (int,error)  
+读到b中，最多len(b)字节，返回实际读的字节数
+等于os.ReadFile(path)
+
+# f.Seek(offset,whence)
+设置下次读写的位置
+
+# f.ReadAt(b []byte, offset int64) (int,error)
+从offset字节开始，读取到b中，最多len(b)字节
+
+# f.WriteAt(b,off)
+同理
+
+如果文件较大，要多次读取，用Read/Seek配合，或使用ReadAt
+
+# f.Stat()(FileInfo,error)
+文件信息
+
+# f.Write(b []byte) (int,error)
+b写入f，len(b)字节
+等于 os.WriteFile(path, b, perm)
+
+# f.WriteString(string) (int,error)
+直接写入字符串
+
+# f.Sync()error
+写文件时，数量太少，可能写入内存未到硬盘，用这个同步过去
+
+
+
+

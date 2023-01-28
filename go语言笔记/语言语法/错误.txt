@@ -1,0 +1,50 @@
+panic和error是两回事，意料内的是error，意料外的才让人panic.
+
+go的错误处理，就是强迫程序员返回和处理多值。
+
+//-----------------------------------------------
+
+go有个很简单的内置接口类型:
+    type error interface{ Error()string }
+
+任何结构体只要绑定了Error()，就能实例化为error：
+    type fileError struct{ s string }
+    func (fe fileError)Error()string{ return fe.s }
+
+这样用就可以了：fileError{"文件打不开"}
+
+但其实不用自己定义，有现成的：
+import errors
+errors.New("打不开")
+
+fmt.Errorf()也能实例化error
+
+//-----------------------------------------------
+
+用的时候：
+    func f(flag bool)(int,error){
+        if flag{
+            return 3,nil
+        }else{
+            return 4,errors.New("f():打不开")
+        }
+    }
+
+    func g(flag)(string,error){
+        x,e:=f(flag)
+        if e!=nil{
+            return "",fmt.Errorf("g():%v",e) //向上传播错误
+        }
+        return x,nil
+    }
+    
+所以处理错误就会有if判断，错误信息用fmt.Errorf附加上下文，不断传播。
+
+//-----------------------------------------------
+
+错误的四个处理级别：忽略、重试、传播、panic
+
+无法处理的错误，就应该抛出异常。(调用panic)
+容易处理的异常，也可以返回错误。(在recover里修改命名返回值)
+所以怎么处理都可以。
+

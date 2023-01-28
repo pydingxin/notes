@@ -1,0 +1,109 @@
+形参就是函数内的局部变量
+func(a int, b int){}
+
+所以圆括号里就是定义变量的过程，精简掉了var
+
+而定义变量可以合并类型，进一步写成
+func(a,b int){}
+
+返回值也必须在圆括号后边指定
+func()int{}
+
+再加一个圆括号，就能从语言层面上支持多值返回，不用返回结构体了
+func()(int,string){}
+
+改动的都是c/c++的痛点，变得更人性化了
+
+//----------------------------------------------------------------
+
+golang支持函数式编程
+首先，函数是一种变量，和定义变量一样：
+	var add func(int, int) int = func(a, b int) int { return a + b }
+
+使用自动类型推断：
+	var add = func(a, b int) int { return a + b }
+
+使用冒号语法省去var：
+	add := func(a, b int) int { return a + b }
+
+左边是个变量，右边是个匿名函数，这个变量的类型是func(int,int)int
+
+//----------------------------------------------------------------
+
+type是定义类型的工具
+type定义新类型，和var定义新变量一样：
+	type cb func(int)int  
+
+我觉得type语法加个等号更明白：
+	type cb = func(int)int
+
+虽然但是，type 和 var 在写法上，逻辑顺序是一样的
+
+//----------------------------------------------------------------
+
+函数作为参数，需要指明形参的类型。
+如下有一个类型为func()的参数callback
+	test:= func(callback func()){
+		...
+		callback()
+	}
+可以使用type定义类型的功能：预先定义这个类型：
+	type cb func()
+这样可以改写为：
+	test:=func(callback cb){
+		...
+		callback()
+	}
+
+//----------------------------------------------------------------
+
+函数作为返回值，也要指明返回值的类型。
+比如返回如下一个匿名函数：
+	func(x int)int{return x+1}
+就得写成：
+	func getAdder()func(int)int{
+		return func(x int)int{return x+1}
+	}
+这样写就有点难看了，不如用type改一下。
+
+//----------------------------------------------------------------
+
+函数作返回值，就有了“闭包”的概念，如下一个闭包：
+func valAdderOf(x int) func() int {
+	return func() int { x++; return x }
+}
+使用了valAdder内部一个局部变量x，就可以保存x的状态
+	adder7 := valAdderOf(7)
+	adder7() //8
+	adder7() //9
+
+//----------------------------------------------------------------
+函数作为方法
+go语言中，struct=class，要面向对象，可在struct外部，把func绑到struct上
+func不仅可以绑到struct上，也可以绑到其他类型上:
+	
+	func (x bundled_type) F/funcname(arguments) (returns){code with x...}
+
+头部稍微难看，但没有了漫天飞的this指针，更简单易读了。
+把数据和函数分离，整体也更清晰。
+
+//----------------------------------------------------------------
+
+其实，这种定义方法，只是一个语法糖，就是把一个形参x，拿出来放到前面
+跟这样写没有任何区别：
+	func F/funcname(x bundled_type,arguments) (returns){}
+
+所以，go方法就是一个普通的函数，和其他面向对象语言的方法完全不同。
+重点是，x还是按值传递的。真要作用到原对象上，必须传指针：
+	func (x *bundled_type) F/funcname(arguments) (returns){code with x...}
+
+通过这种语法糖，golang实现了更简洁清晰的面向对象能力。
+这种实现比java/c++/typescript更优雅，实用也够用，已经是独具特色了。
+
+//----------------------------------------------------------------
+
+不定量参数
+func f(ar ...int){}
+...type 表示该类型的多个参数，会被打包放进切片ar里
+f(1)
+f(3,7,1,3,2)

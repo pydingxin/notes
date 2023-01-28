@@ -1,0 +1,5 @@
+error里只有一个字符串
+
+创建error 有两个常用方法
+# errors.New(string) error
+# fmt.Errorf(format,...any) error

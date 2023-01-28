@@ -1,0 +1,39 @@
+
+db就是库，db.Create就是在库中创造数据，即insert。
+-----------------------------------------------------
+基本套路是：
+    dx:= Man{Name:"dingxin",Age:33}
+    result:= db.Create(&dx)
+得到：
+    dx.ID       //库中主键
+    result.Error
+    result.RowsAffected 
+
+
+-----------------------------------------------------
+指定字段 
+db.Select("Name").Create(&dx)
+等于insert into men (name) values (dx.name)
+即指定库表字段、为values构造值时只带指定的字段，没指定的字段库中为null
+
+反向指定是Omit
+
+
+-----------------------------------------------------
+对切片，会用一条语句，一次性插入。主键的值仍会回填。
+var users []Man
+db.Create(&users)
+
+-----------------------------------------------------
+数据量太大时，要分批，指定每批的个数
+db.CreateInBatches(&users, 1000)
+
+也可在连接时指定这个值
+db, err := gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{
+  CreateBatchSize: 1000,
+})
+db.Create(&users) //自动调用分批
+
+
+-----------------------------------------------------
+如果数据是有约束的，不能简单insert，需要下一节的select-sert/select-up-sert

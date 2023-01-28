@@ -1,0 +1,4 @@
+中文标准字符集是gb18030，不是gbk
+pymysql不支持中文，要用pyodbc，不然中文乱码
+create table 列名有空格中文等字符，要用双引号包括
+sql server默认了中文，导入csv不能用utf8，要用vscode保存成gbk

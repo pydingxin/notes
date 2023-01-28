@@ -1,0 +1,94 @@
+----------------------------------------------------------------
+type Man struct {
+  gorm.Model
+  Name  string
+  Age uint
+}
+字段名字必须首字母大写，否则该字段private，库表也不生成对应字段。
+
+----------------------------------------------------------------
+迁移
+db.AutoMigrate(&Man{})
+AutoMigrate就是建表，用一个空对象的指针反射，库表就自动生成了。
+
+----------------------------------------------------------------
+gorm.Model
+Man匿名嵌套了一个Model。定义如下：
+type Model struct {
+	ID        uint `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt DeletedAt `gorm:"index"`
+}
+这样就自带了一个主键（mysql的主键默认就叫id，自动唯一自增)，并有创建、更新、删除时间。
+
+----------------------------------------------------------------
+关于软删除
+gorm的删除并不是真从库中删掉，只是标记删除时间，这是为了“数据完整性”
+debug模式下可以看到，所有查询条件都会带上"deleted_at" IS NULL
+这也是常规做法，数据库不能真的删除，预防误操作后续恢复。
+
+----------------------------------------------------------------
+蛇形转换
+对字段名转换，一是全小写，二是内部驼峰前加下划线。如ID→id 、UUID→uuid
+所以上述struct，在库表中对应6个字段：name/age/id/created_at/updated_at/deleted_at
+
+对struct名字到table名字，不但符合以上规则，但还要转为复数。如：Info → infos、Man → men，很符合语法。
+以上规则是可以配置改变的。
+
+----------------------------------------------------------------
+字段级权限控制
+用tag控制读写权限、迁移时是否忽略该字段
+
+----------------------------------------------------------------
+可以配置某个数字字段，为自动更新的时间戳，可以是秒、毫秒、纳秒。
+
+----------------------------------------------------------------
+`gorm:"embedded"`平级嵌入结构体
+gorm.Model默认使用了`gorm:"embedded"`，所以能平级嵌入父结构体。
+
+type Author struct {
+    Name  string
+}
+type Blog struct {
+  Title string
+  Author  Author `gorm:"embedded"`
+}
+等于 type Blog struct {
+    Title string
+    Name  string
+}
+
+----------------------------------------------------------------
+gorm tag定义建表的各种要求
+3个重要的：
+size        列长度，较重要，制定字符串长度，否则string默认是varchar(max)
+index       为该列创建索引
+- 建表和读写时忽略该字段
+
+其余不太重要：
+uniqueIndex 唯一索引
+comment     库表注释
+primarykey  定为主键，主键是唯一的，并有索引
+unique      唯一
+default     默认值
+column      定义库表时的列名
+type        定义库表时的列类型，必须完整，如varchar(10) not null
+serializer  序列化器
+not null    
+autoIncrement
+embedded     嵌套struct
+embeddedPrefix 嵌入字段列加前缀
+autoCreateTime 自动填写时间
+autoUpdateTime 自动填写时间
+
+----------------------------------------------------------------
+连接到数据库，根据要求编写dsn即可
+db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+----------------------------------------------------------------
+连接池需要手动配置，防止每个请求都去创建连接，很浪费时间
+sqlDB, err := db.DB()
+sqlDB.SetMaxIdleConns(10)   //最多空闲待命个数，空闲太多会销毁
+sqlDB.SetMaxOpenConns(100)  //最多连接数，需要时创建
+sqlDB.SetConnMaxLifetime(time.Hour) //一个连接使用的最大时间

@@ -1,0 +1,28 @@
+declare 定义变量
+变量必须以@开头。
+declare @var type
+declare @varname type  = value  --定义同时赋值
+如declare @dt datetime = '2022-07-14 01:01:01'
+
+declare还可以定义table/column/cursor，功能很强。
+__________________________________________________________________
+set 为已定义的变量赋值
+set @name='dingxin'
+
+操作库表自动统计受影响的行数，可用set nocount on关闭这个功能
+__________________________________________________________________
+PRINT
+PRINT 常量/变量/表达式 const_str | @variable | string_expr 
+变量必须是char、nchar、varchar 、nvarchar，或能隐式转化为字符串，布尔值就打不出来
+__________________________________________________________________
+select 显示变量，可同时显示多个值
+用select放到表格里，并命名列明：select @dt as dt,@name as name
+用select可以省略as：select @dt dt,@name name
+直接放到匿名列里 select @dt,@name
+__________________________________________________________________
+format
+format(value, format)主要用于日期时间格式化，不能用于其他类型.
+format字符串中 yyyy为年 mm为月 dd为日，如：
+declare @dt datetime = '2022-07-14 01:01:01'
+print format(@dt, 'yyyy-mm/dd')
+打出来是 '2022-01/14'

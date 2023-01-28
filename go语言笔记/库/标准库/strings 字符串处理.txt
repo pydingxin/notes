@@ -1,0 +1,168 @@
+和bytes库基本一样，bytes.txt分类更清晰
+
+# strings.Clone(s string)string
+克隆字符串，包括结构体和数据
+
+-----------------------------------------------
+比较
+
+# strings.Compare(a,b string)bool
+返回0/-1/1，与js类似
+
+# strings.EqualFold(s,t string)bool
+两串是否相等，不区分大小写
+fold指case-folding
+
+-----------------------------------------------
+包含
+
+# strings.Contains(s, substr string)bool
+是否包含该子串
+
+# strings.ContainsAny(s, chars string)bool
+是否包含该子串中任一字符
+
+# strings.ContainsRune(string,rune)bool
+是否包含该rune编码的unicode字符
+
+# strings.Count(s,substr string)int
+子串出现的次数
+非重叠计算，如strings.Count("sss","ss")为1非2
+
+-----------------------------------------------
+分割
+
+# strings.Cut(s, sep string)(L,R string,foundSep bool)
+从左往右找分割串sep，如果找到，分为LR2个子串
+
+# strings.FieldsFunc(s string, f func(rune)bool ) []string
+fieldsFunc就是f，满足f的分隔符连成分隔域，这些域把s分割为子串
+
+-----------------------------------------------
+头尾
+
+# strings.HasPrefix(s, pre string)bool
+判断s的开头是pre
+
+# strings.HasSuffix(s,suf string)bool
+判断s的后缀是suf
+
+-----------------------------------------------
+查找
+
+# strings.Index(s,substr string)int
+从左往右第一个子串位置的下标，未找到为-1
+
+# strings.IndexAny(s, chars string)int
+Any的意思就是把子串视为字符集合，找第一次任一字符出现的下标，无为-1
+
+# strings.IndexByte(s string, c byte)int
+byte即ascii字符，如 strings.IndexByte("ding",'n')
+
+# strings.IndexRune(string,rune)int
+rune即unicode字符的码号
+
+# strings.IndexFunc(s string, f func(rune)bool) int
+用判定函数
+
+# strings.LastIndex(s, substr string)int
+从右往左，子串
+
+# strings.LastIndexAny(s, chars string)int
+从右往左，unicode字符集合
+
+# strings.LastIndexByte(string, byte)int
+从右往左，ascii字符
+
+# strings.LastIndexFunc(string, func(rune)bool) int
+从右往左，unicode字符判定函数
+
+-----------------------------------------------
+
+# strings.Join(elems []string, sep string)string
+把字符串切片elems 用分隔串sep连起来
+
+# strings.Map(f func(rune)rune, string) string
+顾名思义map函数，如果f返回负数，则丢弃该字符
+
+# strings.Repeat(string,count int)string
+重复为长串
+
+# strings.Replace(s, old, new string, n int)string
+从左往右，把s中的old替换为new，替换n次，若n=-1则不限次数
+若old空串，每个空位都替换，如strings.Replace("ab","","_",-1)→"_a_b_"
+
+# strings.ReplaceAll(s, old, new string)string
+全替换
+
+# strings.Split(s, sep string)[]string
+分割，去除sep
+如未找到sep，切片的唯一元素是s
+如sep为空串，所有字符都被分开
+
+# strings.SplitAfter(s, sep string)[]string
+在sep后边分割，但不去除sep
+strings.SplitAfter("a,b,c", ",") → ["a,","b,","c"]
+
+# strings.SplitN(s, sep string, int)[]string
+指定次数
+
+# strings.SplitAfterN(s, sep string, int)[]string
+指定次数
+
+# strings.ToLower(string)string
+转小写
+
+# strings.ToUpper(string)string
+转大写
+
+# strings.Trim(s, cutset string)string
+指定被trim的字符，抽象程度高了
+
+# strings.TrimSpace(string)string
+常规意义的trim，删左右的\r\n \t
+
+# strings.TrimFunc(string, func(rune)bool) string
+更高了
+
+# strings.TrimLeft(s, cutset string)string
+# strings.TrimLeftFunc(string, func(rune)bool)string
+# strings.TrimRight(s, cutset string)string
+# strings.TrimRightFunc(string, func(rune)bool)string
+
+
+# strings.TrimPrefix(s, prefix string)string
+删前缀子串
+
+# strings.TrimSuffix(s, suf string)string
+
+//-----------------------------------------------
+strings.Builder 只写不读
+Builder是构建字符串的工具，底层就是[]byte绑了一些接口
+类似bytes.Buffer，但功能很弱
+
+//无需实例化，声明即可用
+var b strings.Builder 
+
+b.Cap()         //分配的内存空间大小（字节数）
+b.Len()         //当前使用的空间大小（字节数）
+b.Grow(n int)   //额外增加n字节空间（n>=0)
+b.Reset()       //清空分配空间和数据
+
+b.String()      //返回存储的字符串
+
+//写数据的底层逻辑
+func (b *Builder) Write(p []byte) (int,error) 
+
+b.Write([]byte)(int,err)    //往里面写字节数据
+b.WriteByte(byte)err        //写一个字节，返回nil
+b.WriteRune(rune)(int,err)  //写一个unicode编码，可能占用几个字节
+b.WriteString(string)(int,err)  //写一个字符串
+//这四个写入操作，返回的int都是字节数
+
+往里写的时候，会自动分配内存，调节空间，不需要关心空间的问题。
+
+
+//-----------------------------------------------
+strings.Reader 只读不写
+类似bytes.Reader，绑的也是io库的接口

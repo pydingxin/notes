@@ -1,0 +1,30 @@
+不仅for循环语句的圆括号被精简掉了，while和do..while都被合并到了for里
+
+for循环有4种写法
+1、for inition; condition; expression{...} 
+//即以前的for(inition; condition; expression){}
+
+2、for condition{} 
+//即以前的while(condition){}
+
+3、for{...} 
+//即以前的 for(;;){} 或while(true){}
+
+这种合并和精简很有道理，因为for完全可以实现任何形式的循环，在c语言里，while也很多余。
+
+4、循环基本都是为了处理各种数据结构，range工具可以方便地迭代数组、字符串、map等，再也不用数组下标满天飞了
+for idx,ch:= range "dingxin"{
+	fmt.Println(idx,ch)
+}
+但注意，这玩意处理非ascii字符会有问题：
+	for idx, ch := range "丁鑫" {
+		fmt.Println(idx, (ch))
+	}
+	//输出 0 19969 3 37995
+	for idx, ch := range "丁鑫" {
+		fmt.Println(idx, string(ch))
+	}
+	//输出 0 丁 3 鑫
+
+break、continue用法未变
+

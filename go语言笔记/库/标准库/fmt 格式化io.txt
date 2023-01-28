@@ -1,0 +1,112 @@
+--常规
+%% 百分号
+%T type 变量的类型
+%v value(最简形式)，其中%+v是struct带着键
+%#v value(详细形式)
+
+--布尔
+%t 
+
+--整数
+视为unicode编码
+%c 该码点值对应的unicode字符
+%q same，bu single quoted
+%U unicode专属格式
+
+视为数字
+%b 二进制
+%o 八进制
+%O 八进制带前缀（便于分辨）
+%d 十进制
+%x 十六进制
+%X 十六进制带前缀
+
+--浮点数
+%e 科学计数法 带e
+%E 科学计数法 带E
+%f 十进制计数法 
+%a.bf 输出总计a位字符串，其中小数占b位，a/b都可省去
+%g 默认的，小即%f 大即%e
+
+--字符串/字节切片
+%s 字符串
+%q same,but double quoted
+%x 用十六进制数字展示，2位一字节
+%X same,but in upper case
+
+--切片
+%p 地址，也是首个元素的地址
+
+--指针/通道
+%p
+
+--辅助功能
+'+' 为数字类型带上符号
+'-' 左对齐，空格填到右边
+' ' 为数字的%x加空格
+'0' 为指定位数的数字填充0而非空格，如"%09d" "%09.2f"
+---------------------------------------------------------------
+
+# fmt.Print(...any)
+按默认格式 逐个到标准输出 空格分隔 不换行
+缺点是只能输出这个格式
+
+# fmt.Println(...any)
+同上 但换行
+
+# fmt.Printf(format string, ...any)
+f表格式，按指定格式 格式化成字符串 然后到标准输出
+如Printf("%s_%d",a,b)就可以指定分隔符，这就比Print强了
+
+# fmt.Scan(arr ...any)(int,error)
+arr是多个变量的地址，如 Scan(&a,&b)
+扫描标准输入，空格分隔，换行结束，依次赋给变量。返回赋值成功的个数
+这样默认空格分隔其实很有问题，就是头尾的空白符扫不进字符串
+
+# fmt.Scanln(...any)(int,error)
+这个没啥意义，说是遇到换行符停止，实际上遇到换行符肯定停止
+
+# fmt.Scanf(format string, arr ...any)(int,error)
+用format指定输入的样式:
+如Scanf("%s %d", &a,&b)，输入时必须空格分隔。
+如Scanf("%s#%d", &a,&b)，输入时必须#分隔。
+如果a尾部有空格，指定'#'分隔，就能把空格扫进a里，这很有用。
+
+# fmt.Sprint(a ...any)string
+把各参数按默认格式print到一个字符串里，空格分隔
+若有字符串参数，就不加空格（以免字符串头尾有空格？）
+
+# fmt.Sprintln(a ..any)string
+不同于Sprint，这里总是加空格分隔，并且末尾加换行
+
+# fmt.Sprintf(string, ...any)string
+可见，Sprint/Sprintln各有缺点，不能很好地控制输出
+所以需要Sprintf，如 
+fmt.Sprintf("%s_%d\n%s",a,b,c)  //任意选择分隔符，任意换行
+
+# fmt.Sscan(s string, ...any)(int,error)
+从字符串s里扫描，取出放到变量地址目标里 如fmt.Sscan("dingxin 33",&b,&a)
+空白符分隔，换行也是空白符，也一样
+
+# fmt.Sscanln(s string, ...any)(int,error)
+在s中遇到换行符就停止扫描
+
+# fmt.Sscanf(s, f string, arr ...any)(int,error)
+根据指定格式f，从字符串s中扫描，放到变量地址指向里
+如 fmt.Sscanf("丁鑫 is 33_years old","%s is %d_years old",&b,&a)
+批量处理格式化数据很有效
+
+---------------------------------------------------------------
+# fmt.Fprint
+# fmt.Fprintln
+# fmt.Fprintf
+# fmt.Fscan
+# fmt.Fscanln
+# fmt.Fscanf
+同理类似
+---------------------------------------------------------------
+可见，带指定格式的 Scanf/Printf/Sprintf/Sscanf.. 虽更繁琐，但控制效果好
+---------------------------------------------------------------
+
+# fmt.Errorf(format string, ...any)error
+格式化产生error，在附加错误上下文，传播错误时很有用

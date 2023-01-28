@@ -1,0 +1,26 @@
+# path.Dir(string)string
+路径包含好几个斜线，获取最后一个斜线之前的部分，
+即文件夹
+
+# path.Base(string)string
+路径包含好几个斜线，获取最后一个斜线后边的部分
+即文件名
+
+# path.Split(string)(dir,file string)
+分为两个字符串，即 文件夹 和 文件名
+
+# path.Ext(string)string
+文件的扩展名[extension]，如"C:/path.txt"→".txt"
+
+# path.Join(...string)string
+路径连接
+
+# path.Math(pattern, name string)(bool,error)
+正则表达式 和 路径 是否匹配
+
+# path.Clean(string)string
+如果有多余的斜线 点号 就去掉，变得干净一些
+
+# path.IsAbs(string)bool
+是否为绝对路径，绝对路径是以/为起点的
+

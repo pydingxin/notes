@@ -1,0 +1,31 @@
+fs较底层，具体可用io中封装好的接口
+
+# type FS interface{
+    Open(path string) (File,error)
+}
+
+# type File interface{
+    Stat() (FileInfo,error)
+    Read([]byte) (int,error)
+    Close() error
+}
+
+# type FileInfo interface{
+    Name() string    //文件名
+    Size() int64     //字节数
+    Mode() FileMode  //使用模式 如-rw-rw-rw-
+    ModeTime() Time  //上次编辑时间
+    IsDir() bool     //是否文件夹
+}
+
+# type FileMode uint32 //使用模式
+其中 fs.ModePerm 为 0777 也就是 -rwxrwxrwx
+注意：必须是4位数，开头的0不能少
+
+# type DirEntry interface {
+    Name() string
+    IsDir() bool
+    Type() FileMode
+    Info() (FileInfo, error)
+}
+文件夹下的一个条目

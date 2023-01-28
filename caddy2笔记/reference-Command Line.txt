@@ -1,0 +1,25 @@
+$ caddy adapt 
+[--config <path>]   配置文件，默认为Caddyfile
+[--adapter <name>]  配置器 默认为caddyfile
+[--pretty]          格式化输出结果
+[--validate]        验证配置文件
+
+把配置文件转为json形式
+
+—————————————————————————
+$ caddy build-info
+编译信息，包括使用的各种包
+
+—————————————————————————
+$ caddy completion
+生成命令行补全脚本
+
+—————————————————————————
+$caddy environ
+输出caddy使用的环境变量
+
+—————————————————————————
+$caddy file-server
+—————————————————————————
+$
+—————————————————————————

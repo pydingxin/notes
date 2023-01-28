@@ -1,0 +1,132 @@
+-----------------------------------------------
+Kind表大类
+
+type Kind unit  
+const (
+    Invalid Kind = iota
+    Bool
+    Int
+    Int8
+    Int16
+    Int32
+    Int64
+    Uint
+    Uint8
+    Uint16
+    Uint32
+    Uint64
+    Uintptr
+    Float32
+    Float64
+    Complex64
+    Complex128
+    Array
+    Chan
+    Func
+    Interface
+    Map
+    Pointer
+    Slice
+    String
+    Struct
+    UnsafePointer
+)
+可用reflect.String表具体类
+
+func (k Kind) String()string    //Kind对应的字符串名字
+
+-----------------------------------------------
+Type也表类型，不像Kind，它可用于自定义类型
+
+type Type interface{
+    NumMethod() int                     //方法数
+    Method(idx int) Method              //按序号获取方法
+    MethodByName(string) (Method,bool)  //按序号获取
+
+    Name() string
+    String() string
+
+    PkgPath() string    //定义本类的包
+
+    Size() uintptr //相当于unsafe.Sizeof，该种变量的存储空间
+    Bits() int      //同上
+
+    Implements(u Type)bool  //该类型是否是实现的另一个类型
+    AssignableTo(u Type)bool //同理   
+    ConvertibleTo(u Type)bool
+
+    Comparable() bool   //是否能比较
+
+    ChanDir() ChanDir   //若为管道，其方向
+
+    Elem() Type  //若为Array/Slice/Chan/Map 其存储元素的类型
+    //若为指针其指向的类型，如 
+        var p *human; 
+        reflect.TypeOf(p)        //*human
+        reflect.TypeOf(p).Elem() //human
+
+    NumField() int              //若为struct，其字段数
+    Field(i int) StructField    //第i个字段
+    FieldByIndex(index []int) StructField
+    FieldByName(name string) (StructField,bool)
+    FieldByNameFun
+
+    NumIn()int      //若为函数，其参数个数
+    In(i int)Type   //其第i个参数的类型
+    IsVariadic()bool//最末参数是否变长 ...
+    NumOut() int    //返回参数个数
+    Out(i int)Type  //第i个返回参数的类型
+
+    Key() Type      //若为map，其键的类型
+    Len() int       //若为固定数组，其长度
+}
+
+不同Type可用 == 判定是否相等
+
+以下是组合新类型的办法：
+
+# func ArrayOf(length int, elem Type) Type  //构建Array的类型
+# func ChanOf(dir ChanDir, Type) Type       //构建Chan的类型
+# func MapOf(key, elem Type)Type            //构建Map的类型
+# func PointerTo(t Type)Type                //构建指针的类型
+# func SliceOf(Type)Type                    //构建slice的类型
+# func StructOf([]StructField) Type         //构建struct的类型
+# func FuncOf(in, out []Type, variadic bool) Type   //构建函数的类型
+-----------------------------------------------
+type Method struct{
+    Name string
+    PkgPath string
+
+    Type Type
+    Func Value
+    Index int
+}
+
+func (m Method)IsExported()bool //判断这个Method是否导出包
+
+-----------------------------------------------
+
+type StructField struct{
+    Name string //字段名
+    Type Type   //字段类型
+    Tag StructTag   //标签
+}
+
+-----------------------------------------------
+
+type StructTag string
+StructTag 是空格分隔的 k:"v"字符串，如 `spices:"dog" color:"blue"`
+
+# func (t StructTag) Get(key string)string  //获取键值，但不能区分空和无
+# func (t StructTag) Lookup(k string)(v string,found bool) //查找键值
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
