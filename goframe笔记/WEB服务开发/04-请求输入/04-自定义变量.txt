@@ -1,0 +1,26 @@
+自定义变量是流程间交互用的
+比如前置中间件设置给handler用，handler设置给后置中间件用
+
+用法很简单
+用SetParam设置(可以覆盖客户端输入的参数)
+用GetParam/Get/GetVar/GetMap/GetParamVar获取
+
+例：
+func MiddlewareBefore(r *ghttp.Request) {
+	r.SetParam("var1", "variable1")	//设置
+	r.Middleware.Next()
+}
+func MiddlewareAfter(r *ghttp.Request) {
+	r.Middleware.Next()
+	fmt.Println(r.GetParam("var2").String())
+}
+func main() {
+	s := g.Server()
+	s.Use(MiddlewareBefore, MiddlewareAfter)
+	s.BindHandler("/", func(r *ghttp.Request) {
+		r.SetParam("var2", "variable2")	//获取
+		fmt.Println(r.GetParam("var1").String())
+	})
+	s.SetPort(8199)
+	s.Run()
+}

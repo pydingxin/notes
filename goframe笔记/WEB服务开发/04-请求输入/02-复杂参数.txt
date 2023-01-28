@@ -1,3 +1,0 @@
-goframe自动识别 httpMethod 和 Content-Type 进行解析。
-
-这节没什么内容。

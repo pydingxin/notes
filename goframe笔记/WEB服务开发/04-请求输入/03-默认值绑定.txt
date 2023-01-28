@@ -1,0 +1,4 @@
+tag - d 设置默认值
+type RegisterReq struct {
+	Name string `d:"default_name"`
+}

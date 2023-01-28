@@ -57,4 +57,6 @@ r.Get(xx).Int() //对浮点数向下取整
 有两类方法使用多种参数，如果不同种参数有重名的，优先级如下
 Get/GetRequset: Router < Query < Body < Form < Custom
 GetQuery: Query > Body
-为避免这种隐形bug，最好只用Form+Json的方式，够用且无疑义。
+为避免这种隐形bug，不要搞花里胡哨的，用Form提交，返回json，就没问题。
+
+goframe自动识别 httpMethod 和 Content-Type 进行解析。

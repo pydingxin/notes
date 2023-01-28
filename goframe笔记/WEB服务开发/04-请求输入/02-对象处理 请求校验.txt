@@ -1,0 +1,91 @@
+这个对象处理的对象，就是把请求数据转为自定义struct
+
+# 对象转换
+通过各种Get*得到的输入，可方便地用Parse方法(或用Get*Struct)转为结构体。
+转换时可自定义前后端字段映射关系。
+
+# Get*Struct
+底层转换用gconv模块。
+对用户可能输入零值的字段，可以使用指针区分。
+---------------------------------------------------
+## 默认转换规则
+struct中首字母大写的字段参与匹配，先消除格式:
+两者字段名都转为小写，删除各自字段名中的中划线/下划线/空格。
+然后，有匹配的struct字段被赋值，否则置为零值。
+模板: type Man struct {
+        Name string
+        Age  *int
+    }
+    s.BindHandler("/test", func(r *ghttp.Request) {
+        var x *Man
+        r.GetStruct(&x) //指针参数
+        g.DumpWithType(x)
+    })
+
+访问 /test?Na-Me=ding&aG_E=22 输出：
+    main.Man(2) {
+        Name: string(4) "ding",
+        Age:  *int(22),
+    }
+访问 /test?Na-Me=ding&age=ok 输出： 
+    main.Man(2) {
+        Name: string(4) "ding",
+        Age:  *int(0), //用户输入但不是数字，置为零值
+    }
+访问 /test?Na-Me=ding 输出： 
+    main.Man(2) {
+        Name: string(4) "ding",
+        Age:  *int(nil), //用户未输入该字段
+    }
+---------------------------------------------------
+## tag-p 自定义规则
+若前端字段名和struct差异较大，可以在tag中用p定义对应的前端字段，p意为pair。
+例：type Man struct {
+        Name string
+        Age  *int `p:"nianling"`
+    }
+    s.BindHandler("/test", func(r *ghttp.Request) {
+        var x *Man
+        r.GetRequestStruct(&x)
+        g.DumpWithType(x)
+    })
+访问 /test?Na-mE=ding&nianli-ng=13 输出正常。
+可见 p字段定义的名字 与 前端名字 进行了消除格式比较。
+---------------------------------------------------
+注意这种消除格式的字段名比较，只有Get*Struct才有，其他方式没有。
+如上例中，若用Get()，必须是Get("Na-mE")，不能用Get("name")
+
+# Parse*
+Parse*更常用，它先执行tag-v的数据校验，再按Get*Struct方式做转换，更智能。
+模板：
+type RegisterReq struct {
+	Name  string
+	Pass  string `v:"required"`
+	Pass2 string `v:"required|same:Pass"`
+}
+
+type RegisterRes struct {
+	Code  int         `json:"code"` //正常为0
+	Error string      `json:"error"`
+	Data  interface{} `json:"data"`
+}
+
+func main() {
+	s := g.Server()
+	s.BindHandler("/register", func(r *ghttp.Request) {
+		var req *RegisterReq
+		if err := r.Parse(&req); err != nil {
+			r.Response.WriteJsonExit(RegisterRes{
+				Code:  1,
+				Error: err.Error(), //若有多个校验错误，只输出一个，更清晰
+			})
+		}
+		// ...
+		r.Response.WriteJsonExit(RegisterRes{
+			Data: req,
+		})
+	})
+	s.SetPort(8199)
+	s.Run()
+}
+Write*Exit()的Exit相当于return语句，是退出handler的便捷方式。

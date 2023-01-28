@@ -1,0 +1,22 @@
+文件大小受ClientMaxBodySize配置影响，默认支持的上传文件大小为8MB。
+goframe把这个功能封装得很简单。
+
+模板：
+s.Group("/upload", func(group *ghttp.RouterGroup) {
+    group.POST("/", func(r *ghttp.Request) {
+        files := r.GetUploadFiles("upload-file")
+        names, err := files.Save("./")
+        if err != nil {
+            r.Response.WriteExit(err)
+        }
+        //对names，单文件是名字字符串，多文件是名字切片的字符串
+        r.Response.WriteExit("upload successfully: ", names) 
+    }
+}
+
+前端：
+<form enctype="multipart/form-data" action="/upload" method="post">
+    <input type="file" name="upload-file" />
+    <input type="file" name="upload-file" /> //可上传多个文件
+    <input type="submit" />
+</form>
