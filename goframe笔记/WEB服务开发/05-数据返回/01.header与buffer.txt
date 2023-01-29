@@ -1,0 +1,91 @@
+# header
+获取:func (r *Request) GetHeader(key string) string
+设置:func (h Header) Set(key, value string)
+例如：s.BindHandler("/", func(r *ghttp.Request) {
+    r.GetHeader("User-Agent")
+    r.Response.Writer.Header().Set("dingxin", "niubi")
+})
+
+# buffer
+每个请求的返回都是一个Buffer，用各种Write*写入：
+Write       WriteExit
+WriteOver   WriteOverExit
+WriteJson   WriteJsonExit
+Writef      WritefExit
+Writeln     WritelnExit
+Writefln    WriteflnExit
+--------------------------------------------------------
+还有四类不太常用：
+WriteTpl* WriteXml* WriteJsonP* WriteStatus*
+--------------------------------------------------------
+Write*Exit 写入后退出当前handler
+WriteOver* 覆盖式写入
+WriteStatus* 设置http状态码
+--------------------------------------------------------
+Write WriteOver Writeln 能力等于Write，只是开头或结尾不同
+Writef Writefln 是格式化一个字符串
+WriteJson 接受一个struct/map转为json
+--------------------------------------------------------
+## Write例子
+x := []string{"ding", "niubi"}
+y := struct {
+    Name string
+    Age  int
+}{Name: "ding", Age: 33}
+z := map[string]string{"key": "val"}
+
+s.BindHandler("/", func(r *ghttp.Request) {
+    r.Response.Write("hello", 7, 3.14, x, y, z)
+})
+输出：hello73.14["arr1","arr2"]{"Name":"ding","Age":33}{"key":"val"}
+牛! 直接写出struct/map/slice! 都成了字符串。
+Write()是简单写入，不添加任何分隔符。
+--------------------------------------------------------
+## WriteExit例子
+s.BindHandler("/", func(r *ghttp.Request) {
+    if true {
+        r.Response.WriteExit("hello")
+    }
+    r.Response.Write("world")
+})
+输出：hello
+确实退出了handler
+--------------------------------------------------------
+## WriteOver例子
+s.BindHandler("/", func(r *ghttp.Request) {
+    r.Response.Write("hello", 7, 3.14)
+    r.Response.WriteOver(x, y, z)
+})
+输出: ["ding","niubi"]{"Name":"ding","Age":33}{"key":"val"}
+WriteOver就是Write，只是从头写入，覆盖了Buffer
+--------------------------------------------------------
+## Writef例子
+s.BindHandler("/", func(r *ghttp.Request) {
+    r.Response.Writef("%5s-[%5d]", "ok", 3)
+})
+格式化输出："   ok-[    3]"
+--------------------------------------------------------
+## Writeln例子
+s.BindHandler("/", func(r *ghttp.Request) {
+    r.Response.Writeln("hello", 7, 3.14)
+    r.Response.Write(x, y, z)
+})
+输出：
+hello73.14
+["ding","niubi"]{"Name":"ding","Age":33}{"key":"val"}
+所以 Writeln = Write + "\n"
+--------------------------------------------------------
+## WriteJson例子
+y := struct {
+    Name string `json:"mingzi"`
+}{Name: "ding"}
+z := map[string]string{"key": "val"}
+
+s.BindHandler("/", func(r *ghttp.Request) {
+    r.Response.Write(y)
+    r.Response.WriteJson(y)
+    r.Response.WriteJson(z)
+
+})
+输出：{"mingzi":"ding"}{"mingzi":"ding"}{"key":"val"}
+可见，对struct/map都可行，并且 Write 本就有 WriteJson 的能力

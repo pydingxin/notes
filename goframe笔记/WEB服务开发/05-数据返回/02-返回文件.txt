@@ -1,0 +1,12 @@
+# ServeFile 返回文件内容
+把文本文件内容写到buffer里返回
+r.Response.ServeFile("test.txt")
+
+# ServeFileDownload 下载文件
+触发浏览器下载功能，使用流式下载。
+r.Response.ServeFileDownload("test.txt")
+
+# ServeFile目录
+也可以展示目录，用html文本列举文件信息：
+r.Response.ServeFile(".",true)
+如果没有true，则不能读文件夹，返回403 Forbidden，内容为"Forbidden"
