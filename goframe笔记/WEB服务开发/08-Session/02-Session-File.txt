@@ -1,0 +1,90 @@
+Session-File使用内存+内嵌json文件持久化，这也是默认方案。
+
+要理解这个东西，必须清楚以下框架流程。
+----------------------------------------------------------------
+单例Manager管理所有session对象。类似sessionId→Session的map
+----------------------------------------------------------------
+首先，sessionId本身不是状态，而是获取状态的钥匙。
+Session里存着一个data *gmap.StrAnyMap，可以用Session.Set等方法在data里设置数据，比如：
+r.Session.MustSet("key", "val")
+用户的登录状态就存在这个data里。
+执行到r.Session.MustSet时，发生了两件事。
+----------------------------------------------------------------
+第一件事，r.Session可能已经被Manager管理了，也可能还不存在：
+1.如果r.Cookie.Get("gfsessionid")其值存在Manager里,则r.Session已经被框架指向已存储的session对象。
+2.如果其为空或没存，让r.Session指向一个新初始化的session对象，并把它交给Manager管理。
+----------------------------------------------------------------
+第二件事，如果发现客户端没带session信息，即r.Cookie里没有gfsessionid
+则智能设置：r.Cookie.Set("gfsessionid","...")
+返回头就有了 "Set-Cookie: gfsessionid=..."
+以后请求就都带着gfsessionid。
+----------------------------------------------------------------
+session分为读和写
+session的写入涉及session前后端存储的初始化。
+session的读取涉及后端超时。
+一个Session执行其Data、Get等读取方法时，会自动续活：
+记录其sessionId，每隔1分钟重置所有被读取的sessionId的存活时间。
+----------------------------------------------------------------
+sessionId在前后端都有超期时间，一般都是若干小时。
+后端sessionId超期后，Manager中对应session删除，就彻底没有了。
+但此时前端往往没超期，发来请求后，用其sessionId取不到状态，就知道该用户的会话应当结束。
+----------------------------------------------------------------
+后端超时时间可以设置
+比如s.SetSessionMaxAge(time.Hour)，每次续活都会把存活时间重置为一小时。
+----------------------------------------------------------------
+
+理解上述操作，再来看文档中的例子：
+
+通过登录验证，初始化前后端会话：
+r.Session.MustSet("alive", true)
+
+每次访问都在前置中间件里获取会话状态，活的则续活：
+r.Session.Get("alive",false)
+如果长时间没访问，后端超期，就关闭会话。
+
+删除该SessionId的信息，即后端主动关闭会话：
+r.Session.RemoveAll() 
+
+前端删除cookie，也可以主动关闭会话。
+
+----------------------------------------------------------------
+下面模拟一个正常的登录鉴权流程：
+
+func middlewareSessionAlive(r *ghttp.Request) {
+	ok, _ := r.Session.Contains("alive")
+	if !ok {
+		r.Response.WriteExit("请先登录")
+	}
+	r.Session.Get("alive") //已登录则续活
+	r.Middleware.Next()
+}
+
+func main() {
+	s := g.Server()
+	s.SetSessionMaxAge(time.Second * 20)
+	s.Group("/", func(group *ghttp.RouterGroup) {
+		group.ALL("/login", func(r *ghttp.Request) {
+            //验证账号密码
+			if r.Get("name").String() == "dingxin" {
+				r.Session.Set("alive", true) //初始化前后端会话
+				r.Response.Write("登陆成功")
+			} else {
+				r.Response.Write("登陆失败")
+			}
+		})
+		group.Group("/", func(group *ghttp.RouterGroup) {
+			group.Middleware(middlewareSessionAlive)
+            //需要已登录才能走到这里
+			group.ALL("/test", func(r *ghttp.Request) {
+				r.Response.Write("日常工作")
+			})
+
+			group.ALL("/logout", func(r *ghttp.Request) {
+				r.Session.RemoveAll() //关闭后端会话
+				r.Response.Write("您已下线")
+			})
+		})
+	})
+	s.SetPort(80)
+	s.Run()
+}

@@ -1,0 +1,15 @@
+session是一种管理登录状态的方案：
+C→S username+password
+C←S 验证通过，生成sessionId
+C→S 请求时cookie带着SessionId，后台检查其是否存在
+C←S 正常则返回结果，异常则返回错误重置客户端
+
+可见，session需要在后端存储，框架提供了4种存储方式：
+基于内存：
+    Session-Memory 纯内存
+    Session-File 内存+json文件持久化
+基于redis:
+    Session-Redis
+    Session-RedisHashTable
+
+gsession模块封装了cookie/guid/gcache/json等基础模块，非常实用。
