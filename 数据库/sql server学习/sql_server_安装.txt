@@ -1,2 +1,11 @@
-Express是商业版本，developer是开发者版本。
- SQL Server Management Studio 和SQL Server Management Studio Express不能安装在同一计算机上。若要安装 SQL Server Management Studio Express，必须先卸载 SQL Server Management Studio，
+Express是商业版本,developer是开发者版本。
+ SQL Server Management Studio 和SQL Server Management Studio Express不能安装在同一计算机上。若要安装 SQL Server Management Studio Express,必须先卸载 SQL Server Management Studio,
+
+新安装的服务器,默认只能windows登录。
+打开SSMS：
+    在服务器属性里,允许sql server登录模式。
+    在服务器安全性里新建用户（或者在特定库里新建）,为该用户指定角色
+    sa账户默认也是禁用的,如果需要可启动
+打开服务器配置管理器(不是SSMS)：
+    'SQL Server网络配置'里打开TCP/IP连接方式
+    'SQL Server服务'里重启服务器。
