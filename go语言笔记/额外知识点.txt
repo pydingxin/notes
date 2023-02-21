@@ -27,17 +27,6 @@ GOPATH【C:\Users\Administrator\go】
 下有一个pkg文件夹，存放平时项目下载的依赖库包，比如github.com下载了就放这里。
 这个会有检测，GOPATH有的包，应该不会重复下载。
 --------------------------------------------------------------
-包引入1
-
-自己写的包，假设放在文件夹dir1中，dir1要放在GOROOT里
-dir1里可以有好几个文件，每个文件叫什么无所谓，头部注明package dir1，他们就都属于dir1这个包。
-当 import "dir1" 时，dir1里所有go文件都会被引入，执行各自init()，dir1的子文件夹不会引入。
-所有dir1下go文件里的大写的东西，都会放到 dir1这个作用域里，类似dir1.Hello()来使用
-
-dir1下可以有子文件夹dir2
-同理，dir2下所有文件都在头部注明 package dir2
-当 import "dir1/dir2"时，只引入dir2下的所有文件，不引入dir1下的
-同理用 dir2.A()来使用
 
 --------------------------------------------------------------
 包引入2
@@ -52,7 +41,9 @@ import . "fmt" 导入到当前作用域，直接使用Printf
 --------------------------------------------------------------
 包引入3
 
-设main.go在dir_name，要引入当前目录下的东西test.go，用go init dir_name，把当前文件夹注册为主包
+设main.go在dir_name，要引入当前目录下的东西test.go，用
+go init dir_name，或 go mod dir_name
+把当前文件夹注册为主包
 test.go放到子文件夹test里，抬头写package test
 这样在main.go中就能 import "dir_name/test" 了
 引入包是很工程化的。

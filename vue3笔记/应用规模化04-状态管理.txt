@@ -14,3 +14,5 @@ import {store} from './store.js'
 app.config.globalProperties.st = store
 这样变量st就暴露在所有组件的this作用域里，可以直接用。
 
+如果不行，可以直接引用在有需要的组件里，不同过app
+

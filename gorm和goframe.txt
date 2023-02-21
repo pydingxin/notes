@@ -1,0 +1,2 @@
+goframe r.Get获取到的已经转为字符串，就不要用gorm标记serilizer了，
+双重转换会出错误，读数据时读不出来。

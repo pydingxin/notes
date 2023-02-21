@@ -22,7 +22,7 @@ methods:{
 控制事件处理
     @event.stop     // event.stopPropagation()
     @event.prevent  // event.preventDefault()
-    @event.once     // 只执行一次
+    @event.once     // 先解绑原来的事件，防止一次点击执行两次流程
     @event.self     // 自身事件，不来自子元素
     @scroll.passive // 滚屏优化
 
