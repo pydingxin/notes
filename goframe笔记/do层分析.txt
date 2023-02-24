@@ -1,0 +1,25 @@
+由于handler关注点太多，要抽取出数据库操作，简化数据使用，聚焦业务本身。
+
+即用代码生成的方式，对orm再封装一层增删查改的通用语义函数，使用语义就能无感使用数据库。
+
+以创建一个账号的handler_account_create为例：
+一、model有3个子文件夹：dbmodel（库表模型）、iomodel（IO模型）、do（语义操作）。
+二、手动在dbmodel中创建Account.go，内含struct Account的gorm库表定义。
+    生成工具检测到Account.go这个文件，就在do中生成文件do_Account.go，内含Account_开头的十几个常用orm操作。
+三、手动在iomodel中创建io_Account.go。为handler_account_create定义三个部分：
+    1.模型定义：type Input_CreateAccount struct{}，使用goframe validator
+    2.模型验证：func ParseInput_CreateAccount(r *ghttp.Request) *Input_CreateAccount {}
+    3.模型转换：func (in *Input_CreateAccount) ToAcccount() *Account {}
+    定义、验证、转换是iomodel的基本能力。
+四、在handler中使用：
+    func handler_api_account_create(r *ghttp.Request) {
+        in := iomodel.ParseInput_CreateAccount(r) // 出问题自动设置回复，执行r.ExitAll()
+
+        sameName := *do.Account_QueryMultiByFields(&dbmodel.Account{Name: in.Name}) // 语义化操作orm
+        if len(sameName) > 0 {
+            response.FailMsg(r, "账号已存在")
+        }
+
+        // 操作orm出问题panic，在errMiddleware中生成恢复
+        response.DoneData(r, do.Account_CreateOne(in.ToAcccount())) 
+    }

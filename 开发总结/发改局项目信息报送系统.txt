@@ -17,3 +17,4 @@
 还总结了一些开发技巧，比如：
 goframe和caddy共享根目录。
 vue的store和view的关系，事件、数据、视图的互动。
+layout切换中，专门搞个路由配置，给sider和content读取。
