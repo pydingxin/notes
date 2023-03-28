@@ -1,0 +1,35 @@
+stream使用基数树，随机访问复杂度为O(n),n为id长度。
+
+添加entry
+xadd mystream * key val【auto entryId】
+xadd mystream 0-1 key val【assign entryId，最小允许值0-1】
+一个entry就是一个小字典，里面可有很多键值对。
+entryid是横线分隔的形式，默认左边是毫秒数，右边是本entry在该毫秒的次序
+
+处理时间序列
+xrange mystream - +【默认闭区间】
+xrange mystream 1518951480106 1518951480107【指定毫秒数】
+xrange mystream - + count 100【防数据过多 限定数量】
+xrange mystream 1518951480106-1 + count 100【序号+1用作开区间】
+
+非阻塞消息队列,跟时间序列区别不大
+xread streams mystream 0【all msg after entryId】
+xread count 10 streams mystream 0【limit count】
+xread streams str str2 1679964392734-0 1679967415920-0【multiple】
+
+阻塞式消息队列
+xread count n block 0 streams mystream $|0|someid
+block指定阻塞毫秒数，0永远阻塞，$为当前最大id，因此返回的是新消息。
+$用于初始化场景，后续还是要用具体id。
+若多个client阻塞在同一stream上，第一个阻塞的客户端会第一个唤醒。
+有一条消息就会返回，不会等到count指定的数量。
+
+consumer group是多个客户端处理一个队列，如果单个任务处理时间很长，这种模式可以方便地水平扩展，简单地增加client即可。客户端要用唯一名字在组里注册。信息发送给客户端，该信息就pending了，等着客户端确认处理结束。
+若不需要水平扩展，则不必用consumer group。
+如果有多个处理流程，每个都要水平扩展，一个stream上可以有多个group。
+
+xgroup create mystream mygroup $|someid【在某个id后建立消费组】
+xgroup create mystream mygroup $ mkstream【若该流不存在则自动创建】
+
+XREADGROUP 读取，个人尝试操作，未成功
+有时间再研究...
