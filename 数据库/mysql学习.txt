@@ -1,4 +1,4 @@
-1、mysql开启账号远程登录功能，直接在表mysql.user把账号的localhost改为%，重启服务。
+1、mysql开启账号远程登录功能，直接在库mysql表user中把账号的localhost改为%，重启服务。
 select user,host,plugin from user;
 update user set host="%" where user.user='root';
 
