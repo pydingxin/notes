@@ -1,0 +1,80 @@
+centos7 yum更换163的源
+【1】从http://mirrors.163.com/.help/centos.html 下载repo文件替换原来的 /etc/yum.repos.d/CentOS-Base.repo
+【2】然后生成缓存：yum clean all + yum makecache
+【3】更新yum：sudo yum update 
+
+centos7 yum安装mysql
+【1】从https://dev.mysql.com/downloads/repo/yum/下载对应操作系统版本的rpm文件放到服务器上
+【2】安装这个rpm文件 sudo rpm -Uvh mysql80-community-release-el7-3.noarch.rpm
+【3】下载安装软件 sudo yum install mysql-server
+此时会从官网下载真实的包，比如mysql-community-common-8.0.33-1.el7.x86_64.rpm，但非常慢
+可以去国内镜像站【http://uni.mirrors.163.com/mysql/Downloads/】下载现成的
+下载对应的那个包，放到下载目录【如/var/cache/yum/x86_64/7/mysqlXX-community/packages/】
+再执行安装命令就装好了
+
+centos7 配置mysql
+【1】启动mysql：systemctl start  mysqld.service
+【2】获取临时密码：grep "password" /var/log/mysqld.log【如: gAKwikv2gS!b】
+【3】用这个密码进去 mysql -u root -p
+【4】修改新密码 alter user 'root'@'localhost' identified by 'newpassword';
+新密码要求很严格，必须包含数字+大小字母+字符
+
+centos7 安装golang
+【1】yum install go 【换源安装，一切正常】
+【2】查看效果 go version
+【3】换go的源
+echo "export GO111MODULE=on" >> ~/.profile
+echo "export GOPROXY=https://goproxy.cn" >> ~/.profile
+source ~/.profile
+
+centos7 安装caddy
+【1】安装
+每个系统都不同，根据官网文档安装
+【2】配置
+在配置文件 nano /etc/caddy/Caddyfile 中设置静态文件夹 /var/www/ 等信息，并添加网站文件
+在线看配置 curl localhost:2019/config/
+运行可能不正常，stop start 重读配置后，会正常工作
+【3】运行
+直接后台执行 caddy run --config /etc/caddy/Caddyfile &
+重新读取配置 caddy reload --config /etc/caddy/Caddyfile
+守护式后台执行并把输出导到caddylog.txt:
+echo 'Py.wdgl.2023#' | sudo -S nohup caddy run --config /etc/caddy/Caddyfile &
+nohup不能关机后不能自动重启【不同的守护方式会冲突，导致不能正常工作】
+systemctl等其他方式加入开机启动
+
+nano /etc/rc.d/rc.local
+
+官网步骤【无效】
+【1】获取服务配置文件
+    用systemctl安装服务，需要服务配置文件(Unit file)
+    若用Caddyfile配置caddy，则该配置文件叫caddy.service；用api配置caddy，则为caddy-api.service
+    从官网下载，保存到 /etc/systemd/system/caddy.service
+【2】由于配置文件使用了一个叫caddy的用户，安装配置前先创建caddy组和caddy用户
+    sudo groupadd --system caddy
+    sudo useradd --system --gid caddy --create-home --home-dir /var/lib/caddy --shell /usr/sbin/nologin --comment "Caddy web server" caddy
+【3】使用配置
+    系统读取配置 sudo systemctl daemon-reload
+    添加开机启动 sudo systemctl enable --now caddy
+    取消开机启动 sudo systemctl disable caddy
+【4】使用服务
+    查看服务状态：systemctl status caddy
+    停止服务：sudo systemctl stop caddy
+    启动服务：sudo systemctl start caddy
+    查看caddyfile：curl localhost:2019/config/【注意尾部/不能少】
+    重载caddyfile：sudo systemctl reload caddy
+    查看运行文件：journalctl -u caddy --no-pager | less +G
+【5】其他
+    caddy用户的$HOME是/var/lib/caddy，这意味着
+    放数字证书目录是 /var/lib/caddy/.local/share/caddy
+    运行时配置文件为 /var/lib/caddy/.config/caddy/autosave.json
+    caddyfile为/etc/caddy/Caddyfile 官网推荐根目录是/var/www/html
+【6】以上步骤无效
+    官网要求 systemctl --version 232 or newer
+    但centos7中的版本是219，无法生效。体现为如下命令运行正常：
+    ================================================
+        caddy run --config /etc/caddy/Caddyfile &
+        :80
+        root * /var/www/html
+        file_server
+    ================================================
+    因为caddy要用cgroup v2，而centos7用的是v1，centos8又停止更新了，所以centos不适合caddy

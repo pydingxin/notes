@@ -1,0 +1,38 @@
+Ubuntu默认有一个中国源，也可以换一个
+
+==============================================================================
+安装caddy
+在虚拟机中按照caddy官网文档安装，发现dl.cloudsmith.io无法访问。
+用下述方法可行：
+【1】Caddy在官方的Ubuntu 20.04存储库中不存在，先添加库源
+    echo "deb [trusted=yes] https://apt.fury.io/caddy/ /" | sudo tee -a /etc/apt/sources.list.d/caddy-fury.list
+【2】刷新库源并安装
+    sudo apt update
+    sudo apt install caddy
+一切都ok了，也添加到开机启动了，查看：sudo systemctl status caddy
+【3】配置
+    修改配置 sudo nano /etc/caddy/Caddyfile 【最佳根目录/var/www/html】
+    重启服务 sudo systemctl reload caddy
+上传到根目录即可【默认没有文件夹权限】。其他：
+    查看caddyfile：curl localhost:2019/config/【注意尾部/不能少】
+    查看运行文件：journalctl -u caddy --no-pager | less +G
+    caddy用户的$HOME应该是/var/lib/caddy，这意味着
+    放数字证书目录是 /var/lib/caddy/.local/share/caddy
+    运行时配置文件为 /var/lib/caddy/.config/caddy/autosave.json
+    
+==============================================================================
+安装mysql
+sudo apt update
+sudo apt install mysql-server
+sudo systemctl status mysql
+安装完了，默认是系统验证登录，因此sudo mysql直接就能进去。然后修改为账号密码登录:
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'new password';
+FLUSH PRIVILEGES;
+
+==============================================================================
+安装golang
+【1】到官网上 https://golang.google.cn/doc/ 按说明下载并安装
+【2】换源
+echo "export GO111MODULE=on" >> ~/.profile
+echo "export GOPROXY=https://goproxy.cn" >> ~/.profile
+source ~/.profile
