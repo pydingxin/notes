@@ -1,6 +1,6 @@
 云端ubuntu禁用root登录ssh
 用passwd修改系统密码
-Ubuntu默认有一个中国源，可以换一个
+Ubuntu默认有一个中国源，可以换一个更快的
 ==============================================================================
 安装caddy
 在虚拟机中按照caddy官网文档安装，发现dl.cloudsmith.io无法访问。
@@ -12,7 +12,7 @@ Ubuntu默认有一个中国源，可以换一个
     sudo apt install caddy
 一切都ok了，也添加到开机启动了，查看：sudo systemctl status caddy
 【3】配置
-    修改配置 sudo nano /etc/caddy/Caddyfile 【最佳根目录/var/www/html】
+    修改配置 sudo nano /etc/caddy/Caddyfile 【最佳根目录/var/www】
     重启服务 sudo systemctl reload caddy
 上传到根目录即可【默认没有文件夹权限】。其他：
     查看caddyfile：curl localhost:2019/config/【注意尾部/不能少】
@@ -32,11 +32,16 @@ FLUSH PRIVILEGES;
 
 ==============================================================================
 安装golang
-【1】到官网上 https://golang.google.cn/doc/ 按说明下载并安装
+【1】到官网上 https://golang.google.cn/doc/ 按说明下载并安装，比如装1.20版本：
+    wget https://dl.google.com/go/go1.20.4.linux-amd64.tar.gz
+    sudo rm -rf /usr/local/go 
+    sudo tar -C /usr/local -xzf go1.20.4.linux-amd64.tar.gz
+    export PATH=$PATH:/usr/local/go/bin
+    go version
 【2】换源
-echo "export GO111MODULE=on" >> ~/.profile
-echo "export GOPROXY=https://goproxy.cn" >> ~/.profile
-source ~/.profile
+    echo "export GO111MODULE=on" >> ~/.profile
+    echo "export GOPROXY=https://goproxy.cn" >> ~/.profile
+    source ~/.profile
 
 ==============================================================================
 安装nodejs
