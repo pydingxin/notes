@@ -1,3 +1,27 @@
+
+本系统使用caddy2服务器、goframe后端、vue3前端、sqlserver数据库。
+
+关于根目录：
+caddy根目录static；goframe根目录也是static，用户上传文件保存在这里面。
+main.exe和caddy.exe放一起，即可共用static目录，方便通过服务器获取goframe保存的文件。
+
+caddy2守护进程：
+sc.exe create caddy start= auto binPath= "F:\mydev\caddy3Server\caddy.exe run"
+sc.exe start caddy
+sc.exe stop caddy
+
+
+后台服务，把配置文件也拷贝到caddy文件夹里。
+
+数据库dsn:sqlserver://sa:dingxin@localhost:1433?database=fagaiju
+
+管理员账号默认 admin FaGaiJu666!
+
+在阿里云ecs的云服务器ECS-网络与安全-安全组 里， 把80端口添加上，就可以访问了。
+
+
+#### 前端fetchapi的全局url也修改
+=======================================================================
 这个项目是我的首个正式项目，过半精力用于摸索框架、熟悉工具。
 
 最终还算能用，但设计和实现都一塌糊涂：
@@ -18,3 +42,5 @@
 goframe和caddy共享根目录。
 vue的store和view的关系，事件、数据、视图的互动。
 layout切换中，专门搞个路由配置，给sider和content读取。
+
+

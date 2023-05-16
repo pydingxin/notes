@@ -1,0 +1,37 @@
+=================================================
+【1】编译上传
+在linux上用go version查看 系统+架构，如
+  go version go1.20.4 linux/amd64
+在windows上用指定 系统+架构 交叉编译，如
+  SET CGO_ENABLED=0
+  SET GOOS=linux
+  SET GOARCH=amd64
+  go build main.go
+生成main，上传为 /var/backends/XXXXX/main，然后chmod a+x ./main
+XXXXX是项目名，也是文件夹名字
+
+=================================================
+【2】unit文件
+把如下文件保存为/var/backends/XXXXX/XXXXX.service
+[Unit]
+Description=XXXXX
+After=mysql.service
+
+[Service]
+Type=simple
+WorkingDirectory=/var/backends/XXXXX
+ExecStart=/var/backends/XXXXX/main
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+=================================================
+【3】守护进程
+  sudo cp ./XXXXX.service /etc/systemd/system/
+  sudo systemctl daemon-reload
+  sudo systemctl start XXXXX
+  sudo systemctl enable XXXXX
+  sudo systemctl status XXXXX 
+就运行起来了
+【此外还有 stop(停止), restart(重启),disable(将程序从开机启动中移除)】

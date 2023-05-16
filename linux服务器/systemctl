@@ -1,0 +1,8 @@
+先写入unit文件 /etc/systemd/system/xxx.service
+    系统读取配置 sudo systemctl daemon-reload
+    添加开机启动 sudo systemctl enable  xxx
+    取消开机启动 sudo systemctl disable xxx
+    查看服务状态：systemctl status xxx
+    停止服务：sudo systemctl stop xxx
+    启动服务：sudo systemctl start xxx
+    查看运行文件：journalctl -u xxx --no-pager | less +G

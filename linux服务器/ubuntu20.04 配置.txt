@@ -1,6 +1,9 @@
 云端ubuntu禁用root登录ssh
 用passwd修改系统密码
 Ubuntu默认有一个中国源，可以换一个更快的
+
+==============================================================================
+
 ==============================================================================
 安装caddy
 在虚拟机中按照caddy官网文档安装，发现dl.cloudsmith.io无法访问。
@@ -10,8 +13,17 @@ Ubuntu默认有一个中国源，可以换一个更快的
 【2】刷新库源并安装
     sudo apt update
     sudo apt install caddy
-一切都ok了，也添加到开机启动了，查看：sudo systemctl status caddy
-【3】配置
+    一切都ok了，也添加到开机启动了，查看：sudo systemctl status caddy
+【3】创建目录 
+    caddy根目录 sudo mkdir /var/www
+    后端项目根目录 sudo mkdir /var/backends
+    查看当前用户 whoami
+    看当前用户的组 id username
+    把根目录所有者设为某组某人：
+    sudo chown -R wdgl:wdgl /var/www 
+    sudo chown -R wdgl:wdgl /var/backends 
+    sudo chown -R wdgl:wdgl /tmp/gsessions
+【4】配置
     修改配置 sudo nano /etc/caddy/Caddyfile 【最佳根目录/var/www】
     重启服务 sudo systemctl reload caddy
 上传到根目录即可【默认没有文件夹权限】。其他：
@@ -38,11 +50,13 @@ FLUSH PRIVILEGES;
     sudo tar -C /usr/local -xzf go1.20.4.linux-amd64.tar.gz
     export PATH=$PATH:/usr/local/go/bin
     go version
-【2】换源
+其实这是有问题的，这个/usr/local/go/bin并不会被保存到./profile里，下次登录不能执行go
+所以应该给程序做个软连接 sudo ln -s /usr/local/go/bin/go /bin/go
+
+【2】换源，把环境变量保存到profile文件，再把profile文件读取到当前环境中
     echo "export GO111MODULE=on" >> ~/.profile
     echo "export GOPROXY=https://goproxy.cn" >> ~/.profile
     source ~/.profile
-
 ==============================================================================
 安装nodejs
 官网在https://github.com/nodesource/distributions/blob/master/README.md
