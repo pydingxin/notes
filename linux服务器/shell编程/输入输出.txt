@@ -1,0 +1,37 @@
+===============================================
+read 输入
+read从控制台读入到变量
+read name
+read -p "input you name" name
+===============================================
+echo 输出
+echo将后续内容写到控制台，末尾自动添加换行符
+echo hello world
+
+echo -n 取消结尾换行
+
+echo打印变量
+echo $name or ${name}
+
+echo -e 开启转义字符
+
+echo转义控制，用-e配合字符串使用
+\n 换行 echo -e "a\nb"
+\v 原地换行，到达下行此处
+\c 取消后续输出 echo -e "hell\co"
+\r 回车 回到行首
+\t 横向制表符
+
+echo打印命令执行结果，用``把命令引起来
+echo `date`
+
+echo打印字面量，用''引起来，内部变量转义都不生效
+echo '\t$name'
+
+echo 输出到文件
+echo "hello" > result.txt
+这是所有语言里最简单的写文件方式
+
+===============================================
+printf就是c语言的输出，原样搬到shell里了
+printf "%10s\t%8.2f" dingxin 33

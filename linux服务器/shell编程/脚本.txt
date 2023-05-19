@@ -1,0 +1,4 @@
+脚本首行 #!/bin/bash
+脚本后缀sh
+脚本添加执行权 chmod a+x test.sh
+直接执行./test.sh，或bash ./test.sh
