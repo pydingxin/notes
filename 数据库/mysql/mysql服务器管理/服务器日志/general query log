@@ -1,0 +1,9 @@
+general query log记录所有客户端发来的命令，包括建立连接、查询、修改数据等。
+
+默认文件是数据文件夹的host_name.log
+可用--general_log_file=file_name指定。
+
+--general_log=0关闭记录，默认就是关闭的
+=1或不指定参数开启记录。
+
+binary log 的记录顺序与之不同，当两者都开启并有某些冲突时，general query log就会放弃某些记录，所以并不很靠谱。

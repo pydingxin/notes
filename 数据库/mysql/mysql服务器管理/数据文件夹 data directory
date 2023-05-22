@@ -1,0 +1,4 @@
+用mysqladmin variables|grep datadir查看
+一般是/var/lib/mysql/
+
+这里每个数据库都有自己的文件夹

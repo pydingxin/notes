@@ -1,0 +1,2 @@
+mysqlimport是对load data infile命令的封装
+适用场景是导入逐行保存的文本数据，比如csv
