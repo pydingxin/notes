@@ -1,0 +1,33 @@
+.mylogin.cnf是用户目录中的配置文件，保存mysql密码等登录信息，默认在用户目录
+可配置5种信息：host, user, password, port socket。例如
+    [client]
+    user = mydefaultname
+    password = mydefaultpass
+    host = 127.0.0.1
+但这个文件是加密的，其实看不见内容，只能用mysql_config_editor读写。
+当mysql、mysqldump等客户端程序连接服务器时，就可以使用预定配置。
+除了[client]还可以有其他组，每个组叫做一个login-path
+
+配置：
+mysql_config_editor set --login-path=client --host=localhost --user=root --password
+必须手动输入密码，就会（自动创建配置文件）覆盖配置。
+文件权限是rw-------，不能改变，否则客户端会拒绝使用或编辑。
+
+查看：
+mysql_config_editor print --all
+
+删除：
+mysql_config_editor remove --login-path=client  #整个删除
+mysql_config_editor remove --login-path=mypath --user #删除某个配置
+
+使用：
+[client]组是默认的，配置好client后直接mysql就能本地登录
+无需输入密码，相当于mysql --login-path=client
+
+使用2：
+如果有配置的其他组，如
+[remote]
+user = remoteuser
+password = *****
+host = remote.example.com
+可用 mysql --login-path=remote 登录远程服务器
