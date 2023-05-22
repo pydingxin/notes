@@ -1,0 +1,16 @@
+执行特权命令
+mysqladmin [options] command [command-arg] [command [command-arg]] ...
+
+command包括：
+建库    mysqladmin create db1
+删库    mysqladmin drop db1
+改密码  mysqladmin password new_password
+连通测试    mysqladmin ping
+关闭数据库  mysqladmin shutdown
+主从复制    mysqladmin start-slave
+停止复制    mysqladmin stop-slave
+查看配置    mysqladmin variables
+查看版本    mysqladmin version
+
+可同时执行多个command，比如
+mysqladmin create db1 drop db2

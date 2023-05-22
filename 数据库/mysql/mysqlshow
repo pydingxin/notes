@@ -1,0 +1,8 @@
+这个工具方便查看库、表、列、索引
+mysqlshow [options] [db_name [tbl_name [col_name]]]
+
+mysqlshow 列出所有库
+mysqlshow db1 列出db1所有表
+mysqlshow db1 tb1 列出db1 tb1中所有列
+
+可以使用通配符 * ? % _
