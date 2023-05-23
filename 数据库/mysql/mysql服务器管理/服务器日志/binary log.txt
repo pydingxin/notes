@@ -1,0 +1,13 @@
+binary log 记录所有改变数据库的操作，而不记录无副作用的操作，默认开启，支持加密和校验。
+
+有两个用途：一是主从复制，把log发给从节点执行即可同步，这就是主从复制的原理。二是数据恢复。
+
+用--log-bin选项开启。用--skip-log-bin或--disable-log-bin关闭，也可用SET sql_log_bin=OFF|ON 运行时开关。关闭则会关闭主从复制等基于binary log的其他功能。
+
+--log-bin[=base_name]指定basename，默认叫binlog；同时还可保存到其他地方，详见文档。
+
+datadir里有时间顺序的binlog.000001、binlog.000002一大堆文件，这是因为当服务器重启或刷新日志（当前文件达到max_binlog_size或flush log）时就会重开一个新日志文件。这些名字都自动记录在binlog.index里。
+
+每台服务器都有server_id，默认是1，在主从拓扑下，必须为每台服务器指定唯一的非零id。
+
+有三种log格式：row-based statement-based mixed-base 

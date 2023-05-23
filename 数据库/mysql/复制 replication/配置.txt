@@ -1,0 +1,25 @@
+source到replica是一对多的关系。适用于
+一、写少读多时主写从读，横向扩展提高性能。
+二、在replica上停机备份/分析数据，防止影响主服务。
+三、远程数据分发，由于是异步传输，不必持续连接。
+
+有不同传输方式，一是传递binary log；二是全局操作id/GTID。默认是异步的，source不关心replica的状态；半同步会阻塞source的commit，等待一个replica确认才返回；NDB Cluster模式则是同步的。
+
+
+
+replica的binarylog功能不必开启，但开启也有好处，可用于链式传输或数据备份。
+
+source的操作默认写入replica自身的binarylog，这可用--log_replica_updates=ON|OFF (after V8.0.26)或--log_slave_updates (before V8.0.26)控制，链式传输时中间节点必须开启。
+
+如果binarylog关闭了，打开后得重启服务，修改任何设置后最好重启。
+
+
+source不能开启skip_networking。
+
+集群中每个节点要有不同serverID，用SET GLOBAL server_id = 2修改serverID（如果之前serverID是0，修改后要重启服务）。也可以修改配置文件：
+[mysqld]
+server-id=21
+
+
+
+

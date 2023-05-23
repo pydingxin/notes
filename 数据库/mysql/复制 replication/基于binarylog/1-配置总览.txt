@@ -1,0 +1,13 @@
+source把事件写入log，replica读取并执行
+
+基于binarylog的复制，每个replica都会收到全部内容，可以配置replica同步特定库或表，但不能配置source。
+
+每个replica都有“坐标”，即binlog文件名-位置，replica请求source恢复，replica无法影响source。
+
+所有节点都有唯一serverid
+
+从节点要配置主节点的host、log文件名、文件内读取位置。
+用下述statement配置从节点：
+CHANGE REPLICATION SOURCE TO (from MySQL 8.0.23) 
+CHANGE MASTER TO  (before MySQL 8.0.23)
+
