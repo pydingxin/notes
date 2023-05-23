@@ -1,0 +1,18 @@
+
+从节点连接主节点需要一个账号，在如下命令中
+CHANGE REPLICATION SOURCE TO  (from 8.0.23)
+CHANGE MASTER TO  (before 8.0.23)
+指定参数SOURCE_USER | MASTER_USER
+
+从节点可以各分别建立账号，或共用一个账号
+账号密码以明文保存在从节点的mysql.slave_master_info，账号最好只用于主从复制
+
+创建账号
+CREATE USER 'repl'@'%.example.com' IDENTIFIED BY 'password';
+
+赋予权限
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%.example.com'; 
+若只是主从复制，REPLICATION SLAVE权限即可
+
+若主节点使用caching_sha2_password登录验证，应使用加密连接。
+若不是加密连接，应开启 RSA key pair-based password exchange 

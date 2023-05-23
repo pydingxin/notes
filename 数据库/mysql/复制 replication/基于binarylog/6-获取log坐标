@@ -1,0 +1,20 @@
+应在主节点标记起始坐标，即binglog文件-文件内位置
+
+若需要关停source创建数据快照，可以跳过本节。
+因为重启source后，起点坐标就是新的binlog文件。
+
+获取当前坐标：
+一、命令行登录 source 执行 FLUSH TABLES WITH READ LOCK;
+把所有库表写盘加锁，不要退出（退出登录则释放锁）
+二、在另一个命令行登录执行 SHOW MASTER STATUS，输出：
+-------------------------------------
+             File: mysql-bin.000003
+         Position: 73
+     Binlog_Do_DB: test
+ Binlog_Ignore_DB: manual, mysql
+Executed_Gtid_Set: 3E11FA47-71CA-11E1-9E33-C80AA9429562:1-5
+-------------------------------------
+这里File-Position就是坐标，如果binarylog关闭着会输出空值
+
+若source上已经有一些数据要同步，不要退出命令行，继续锁住source，在其他控制台处理数据快照。
+如果没有数据，退出释放锁。

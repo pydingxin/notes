@@ -1,0 +1,7 @@
+与主节点一样配置serverid，或者在配置文件中修改：
+[mysqld]
+server-id=21
+
+replica的binarylog功能不开启，也可以主从同步。
+
+replica开启binarylog时，source的操作默认写入replica自身的binarylog，这可用--log_replica_updates=ON|OFF (after V8.0.26)或--log_slave_updates (before V8.0.26)控制。但对链式传输A→B→C，B必须开启此功能。

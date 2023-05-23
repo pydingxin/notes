@@ -1,0 +1,17 @@
+若当前节点作为新source（一般不会）
+在新source上使用旧source的逻辑备份 mysql -h source < fulldb.dump
+
+若当前节点作为从节点，从节点运行前，确保：
+配置source，获取source坐标，释放source读锁 unlock tables，配置从节点
+
+一、有存量数据
+用逻辑备份，则mysql < fulldb.dump导入数据（可以同时设置坐标，见上节）
+冷备文件夹，则覆盖datadir：tar xvf dbdump.tar。
+二、无存量数据
+则用CHANGE REPLICATION SOURCE TO | CHANGE MASTER TO设置坐标。
+
+不管有没有存量数据，此时存量状态已经同步完了，然后
+三、启动同步
+START REPLICA (or START SLAVE before 8.0.22)
+
+从节点的主从信息保存在mysql库中，不要直接编辑。

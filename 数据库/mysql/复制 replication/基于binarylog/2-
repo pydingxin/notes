@@ -12,4 +12,4 @@ InnoDB Cluster便于管理集群。
 除此之外，根据不同场景还要考虑：
 添加新source
 添加新replica
-总之很复杂
+等等

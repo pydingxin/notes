@@ -1,0 +1,20 @@
+若主从同步开始前，source有存量数据要给所有replica：
+一、用mysqldump做一个逻辑备份，在所有replica上导入
+二、停机冷备datadir
+三、用msyql的克隆功能
+
+【有个更方便的功能InnoDB Cluster】
+
+方法一 mysqldump
+此时所有库表都存盘锁住，无法写入，把目标数据导出来：
+mysqldump --all-databases --source-data > dbdump.db
+--master-data表明这是主从复制的主节点做的数据快照，因此会自动添加坐标，如：
+CHANGE MASTER TO MASTER_LOG_FILE='binlog000012',MASTER_LOG_POS=157
+此时source还存盘锁库，在这个时间点，上节得到了坐标，本节取出了存量数据。
+此时释放库表，增量数据也会记录在坐标之后。这样就得到了一个特定时刻的状态。
+
+方法二 冷备datadir
+此时另一个控制台正在存盘锁库，获取了坐标。
+这里直接停机 mysqladmin shutdown
+打包文件夹 tar cf /tmp/db.tar ./datadir
+同样得到了此刻的数据和坐标
