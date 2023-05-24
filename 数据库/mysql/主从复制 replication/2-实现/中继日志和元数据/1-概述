@@ -1,0 +1,14 @@
+replica会存储一些主从复制的信息:
+
+1.relay log
+    存储从source的binarylog读取的事务
+2.connection metadata repository
+    mysql.slave_master_info 表存储连接信息
+3.applier metadata repository
+    mysql.slave_relay_log_info 表
+
+2和3统称元数据，都是InnoDB引擎的库表
+
+relay log就是中继日志，source向replica发送binarylog，就被存在中继日志里，其缓存的作用，replica读取中继日志，每执行一条就放进自己的binarylog里
+
+对一个中继日志文件，当其中的事务都被replica执行完后，就自动被删除。 

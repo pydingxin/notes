@@ -1,0 +1,8 @@
+当一个客户端连接时，用其用户名和ip从user表中查找此账号，其plugin就是登录验证模块，验证结果决定是否允许登录。
+
+这允许多样化的验证和外部验证，比如操作系统验证
+
+系统有默认的验证模块，即caching_sha2_password，创建账户时自动指定：
+CREATE USER 'jeffrey'@'localhost' IDENTIFIED BY 'password';
+
+这种验证方式要求远程登录时使用加密连接。
