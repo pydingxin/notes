@@ -1,0 +1,20 @@
+在从节点上配置主节点信息：
+[before 8.0.23]
+CHANGE MASTER TO
+    MASTER_HOST='source_host_name',
+    MASTER_USER='replication_user_name',
+    MASTER_PASSWORD='replication_password',
+    MASTER_LOG_FILE='recorded_log_file_name',
+    MASTER_LOG_POS=recorded_log_position;
+
+[after 8.0.23]
+CHANGE REPLICATION SOURCE TO
+    SOURCE_HOST='source_host_name',
+    SOURCE_USER='replication_user_name',
+    SOURCE_PASSWORD='replication_password',
+    SOURCE_LOG_FILE='recorded_log_file_name',
+    SOURCE_LOG_POS=recorded_log_position;
+
+这个命令有很多配置，比如开启SSL加密通信。
+
+如果SOURCE_USER在主节点上用的是caching_sha2_password认证，而未开启加密通信，必须用 SOURCE_PUBLIC_KEY_PATH | MASTER_PUBLIC_KEY_PATH 或GET_SOURCE_PUBLIC_KEY | GET_MASTER_PUBLIC_KEY 启动密码交换。
