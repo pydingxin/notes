@@ -1,0 +1,16 @@
+GTID是基于事务的id，source_uuid:transaction_id，前者安装时自动生成，后者从1开始，最大值2&63-1，这个值很大。
+
+主节点的事务写入binarylog，就自动生成一个gtid，保证连续无间断单调递增。如果是读操作等不写入binarylog的则没有gtid。从节点不修改GTID，即使从节点不保存binarylog，也会记录执行过的gtid，对重复的自动跳过不执行。
+
+gtid集合是一组gtid，参数gtid_executed就是一个集合，连续的如：
+3E11FA47-71CA-11E1-9E33-C80AA9429562:1-5
+加上零散的：
+3E11FA47-71CA-11E1-9E33-C80AA9429562:1-3:11:47-49
+还可有不同来源的：
+2174B383-5441-11E8-B90A-C80AA9429562:1-3, 24DA167-0C0C-11E8-8442-00059A3C7B00:1-19
+
+gtid_executed其实是一个表
+其中列有 server_uuid/interval_start/interval_end
+启动该表：gtid_mode=ON
+清空该表：RESET MASTER
+此表默认不启动。如果replica的binarylog关闭(log_bin=OFF)，或虽然开启但不记录主从同步 （log_replica_updates|log_slave_updates=OFF），则自动启用此表。

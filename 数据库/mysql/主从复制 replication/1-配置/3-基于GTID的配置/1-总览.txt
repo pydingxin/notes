@@ -1,0 +1,11 @@
+GTID就是事务id，这比基于bianrylog坐标的方式更方便。
+
+最好使用row-based的而非statement-based的格式。
+
+这涉及以下问题：
+GTID的定义、创建、保存
+GTID的生命周期
+基于GTID的自动坐标定位
+基于GTID主从复制的常规流程
+GTID的限制和极限
+关于GTID的内置函数
