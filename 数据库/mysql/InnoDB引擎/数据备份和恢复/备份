@@ -1,0 +1,4 @@
+数据库一定要定期备份，综合使用各种备份手段：
+付费热备 mysql enterprise backup
+关机冷备
+小量数据的mysqldump逻辑备份
