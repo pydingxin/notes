@@ -7,7 +7,7 @@ slow query log：执行时间超出long_query_time的查询
 DDL log(metadata log)：元数据修改命令
 
 日志都是文件，一般在内存打开，特定时机刷到磁盘上。
-以下行为造成关闭日志文件，并重新打开
+以下行为让日志所有文件 落盘、关闭并重新打开
 1.FLUSH LOGS
 2.mysqladmin --flush-logs | --refresh
 3.mysqldump --flush-logs | --master-data

@@ -2,6 +2,7 @@ describe是explain的别名，是一个东西，但习惯上describe用于获取
 
 describe tbname;
 describe tbname columnName;
+describe 简写为 desc
 
 explain 可以解释 SELECT, DELETE, INSERT, REPLACE, UPDATE命令的执行计划，但不真的执行：
 EXPLAIN SELECT Name FROM country WHERE Code Like 'A%';
