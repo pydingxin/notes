@@ -23,6 +23,7 @@ mysql_config_editor remove --login-path=mypath --user #删除某个配置
 使用：
 [client]组是默认的，配置好client后直接mysql就能本地登录
 无需输入密码，相当于mysql --login-path=client
+不同账号要分别配置
 
 使用2：
 如果有配置的其他组，如

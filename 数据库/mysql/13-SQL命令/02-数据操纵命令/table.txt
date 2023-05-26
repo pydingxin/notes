@@ -1,0 +1,17 @@
+table是 v8.0.19 引入的命令，用于展示全表内容，更符合自然语言
+TABLE table_name 
+[ORDER BY column_name] 
+[LIMIT number [OFFSET number]]
+
+TABLE t 等于 SELECT * FROM t
+但table强制展示所有列
+默认展示所有行，limit 限定行数 offset 跳过前n行
+不筛选行，不支持where
+order by可以排序
+
+table在很多情况下能替代 select * from:
+1.两表合并：table t1 union table t2
+2.导出文件：table t1 into outfile ..
+3.SELECT * FROM t1 WHERE col IN (TABLE t2);
+其中t1有col，t2只有col列
+

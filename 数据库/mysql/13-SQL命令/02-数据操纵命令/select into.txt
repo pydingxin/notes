@@ -1,0 +1,49 @@
+select into 把查询结果存到变量、文件中
+
+================================================
+存到变量
+只能存一个数据，不能存表格，格式很灵活：
+select user into @x from accounts where id=1;
+select user from accounts into @x where id=1;
+select user from accounts where id=1 into @x;
+不能用于嵌套select。
+查询结果必须有且只有一行，多行用limit 1
+
+可以存多个变量
+SELECT user,pass INTO @x, @y FROM accounts LIMIT 1;
+
+================================================
+存到文件里
+select * from accounts into outfile 'filepath'
+
+这个命令需要FILE权限。
+查看show variables like '%secure_file_priv%'，这是规定文件夹，必须非null
+文件夹可能不存在，但mysql不会主动创建它
+该文件不能已存在。
+filepath必须在secure_file_priv规定的文件夹中:
+select * from accounts into outfile '/var/lib/mysql-files/accounts'
+
+指定编码 CHARACTER SET
+---------------------------------
+FIELDS & LINES 参数都可为空，同时出现时，FIELDS必须在LINES前面。
+不指定等同于默认值：
+    FIELDS TERMINATED BY '\t' ENCLOSED BY '' ESCAPED BY '\\'
+    LINES TERMINATED BY '\n' STARTING BY ''
+这与LOAD DATA的默认值是一样的。
+
+每行数据先用\对每列数据转义，NULL转为\N，然后列间加\t，写入文件，每行末加\n。
+STARTING BY是处理前缀用的。
+windows上LINES TERMINATED BY应为'\r\n'
+
+---------------------------------
+可与table命令合用
+TABLE employees INTO OUTFILE ..;
+
+---------------------------------
+与values命令合用，把指定数据写入文件
+SELECT * FROM (VALUES ROW(1,2,3),ROW(4,5,6),ROW(7,8,9)) AS t
+INTO OUTFILE '/tmp/select-values.txt';
+
+---------------------------------
+使用INTO DUMPFILE把一行写入文件，不做任何内容处理。
+用于导出blob二进制文件

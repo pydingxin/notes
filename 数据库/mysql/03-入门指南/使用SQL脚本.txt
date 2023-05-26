@@ -11,6 +11,8 @@ mysql < script_file > out.txt
 结果美观化：-t
 结果中显示对应命令：-v
 
+在执行结果中插入文字：
+select 'content' as 'title'
+
 若已经进入mysql客户端，导入执行外部脚本：
 mysql> source script_file;
-

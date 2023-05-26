@@ -1,0 +1,10 @@
+describe是explain的别名，是一个东西，但习惯上describe用于获取表结构，explain用于解释命令执行情况。
+
+describe tbname;
+describe tbname columnName;
+
+explain 可以解释 SELECT, DELETE, INSERT, REPLACE, UPDATE命令的执行计划，但不真的执行：
+EXPLAIN SELECT Name FROM country WHERE Code Like 'A%';
+
+explain analyze可以真实执行命令并分析过程，但只能用于select/table/多表update和delete
+
