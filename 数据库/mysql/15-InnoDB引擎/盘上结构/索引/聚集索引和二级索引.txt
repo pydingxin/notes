@@ -1,0 +1,6 @@
+clustered index 聚集索引
+secondary index 二级索引
+
+每个InnoDB都必定有且只有一个聚集索引，用于加速查找，这是表的核心。要么是primary key ，要么是 unique not null，都没有的话，会自动生成一个隐形的自增主键GEN_CLUST_INDEX
+
+聚集索引之外的索引都是二级索引，每个二级索引里都存储了聚集索引，所以聚集索引最好短小，否则会占太多空间。

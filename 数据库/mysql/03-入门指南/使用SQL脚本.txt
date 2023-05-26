@@ -1,0 +1,16 @@
+用mysql客户端执行脚本：mysql < script_file
+windows上好像不行，有特殊字符
+
+若要输入密码：
+mysql -h host -u user -p < script_file
+
+结果定向到文件：
+mysql < script_file > out.txt
+
+若要个别语句出错仍然执行，用--force
+结果美观化：-t
+结果中显示对应命令：-v
+
+若已经进入mysql客户端，导入执行外部脚本：
+mysql> source script_file;
+

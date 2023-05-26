@@ -1,0 +1,14 @@
+日志种类：
+error log：mysqld运行发生的错误
+general query log：从客户端收到的所有命令
+binary log：改变数据的命令
+relay log：只用于主从复制中replica保存source发来的日志
+slow query log：执行时间超出long_query_time的查询
+DDL log(metadata log)：元数据修改命令
+
+日志都是文件，一般在内存打开，特定时机刷到磁盘上。
+以下行为造成关闭日志文件，并重新打开
+1.FLUSH LOGS
+2.mysqladmin --flush-logs | --refresh
+3.mysqldump --flush-logs | --master-data
+4.日志大小达到限制

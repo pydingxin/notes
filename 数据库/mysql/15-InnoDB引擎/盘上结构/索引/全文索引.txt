@@ -1,0 +1,17 @@
+全文索引出现在命令create table、alter table、create index中，用于文本类型的列 varchar|char|text
+
+全文索引使用《倒排索引》，把该列文本用分词器分成token，并存储每个token的指向信息(数据行 token位置）
+
+用法如下：
+CREATE TABLE articles (
+    id INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    title VARCHAR (200),
+    body TEXT,
+    FULLTEXT (title, body) WITH PARSER ngram
+) ENGINE = INNODB DEFAULT CHARSET=utf8mb4 ;
+
+这个索引创建了十个左右的辅助表和各种数据结构。
+
+SELECT * FROM articles WHERE MATCH (title,body) AGAINST ('精神');
+
+这用于全文索引功能Full-text serach，和自然语言处理有关。

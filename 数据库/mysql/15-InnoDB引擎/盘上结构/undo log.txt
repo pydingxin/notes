@@ -1,0 +1,11 @@
+和redo log一样，undolog也是InnoDB的事务日志，用于实现原子性，即事务失败时挽回所有改变，以及支持rollback命令。
+
+start transtraction;
+..
+rollback
+..
+commit;
+
+每改变一行数据，都会先把原始数据存到undolog(包括事务编号，磁盘数据位置)，也是预先日志持久化，如果需要回滚事务，读取日志把原始数据存回去即可。
+
+后台purge线程自动删除不需要的undolog

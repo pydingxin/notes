@@ -1,0 +1,16 @@
+redo log保证事务持久性，把事务的修改落实到磁盘上。
+
+binarylog是MySQL服务器的记录，是逻辑行列变化；redolog是InnoDB引擎的记录，记录物理磁盘区块数据变化。与所有log一样，redolog分为内存buffer和磁盘file。执行事务时，若要修改磁盘数据，InnoDB如下操作：
+    1.磁盘数据A读入内存 → 
+    2.把A要做的变化写入redolog buffer → 
+    3.redolog buffer 写入 os buffer 再写入磁盘 → 
+    4.修改A并写回磁盘
+有两个持久化操作，这叫预先日志持久化Write-Ahead Logging（WAL），先有日志的持久化，再有数据持久化，用一个持久化保证另一个持久化。
+
+在上述第三步中，redo log由内存写到磁盘是成败的关键，由参数innodb_flush_log_at_trx_commit控制频率
+0 每秒写一次盘，最多丢失一秒数据
+1 每个事务都会写盘，绝不丢失数据
+2 不做控制，只是写入OSbuffer，也是最多丢一秒数据
+日志是顺序IO，真实数据是随机IO，根据局部性原理，写入日志的代价比写真实数据低得多。
+
+force-log-at-commit机制规定，一个事务的所有日志都要落盘，才能commit。然后Mysql知道事务完成了，才产生binary log.
