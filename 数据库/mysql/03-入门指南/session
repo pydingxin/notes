@@ -2,6 +2,6 @@
 
 一个host就是ip确定的一台机子，比如localhost。
 
-mysql最大连接数max_connections，大概不到两百个。一般web程序有并发的需求，会申请很多连接，不同请求共享复用这些连接。
+mysql最大连接数max_connections=151。一般web程序有并发的需求，会申请很多连接，不同请求共享复用这些连接。
 如果开启的web程序过多，mysql可能拒绝连接，程序就会出问题。
 

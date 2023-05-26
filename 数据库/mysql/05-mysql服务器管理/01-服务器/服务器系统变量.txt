@@ -1,0 +1,26 @@
+系统变量大多有默认值，可以开机时从命令行或配置文件读取，很多也可用SET命令运行时设置（需要SYSTEM_VARIABLES_ADMIN权限）。针对会话的系统变量任何用户都可以设置。
+
+查看所有变量：mysqld --verbose --help
+
+涉及enable/disable的变量，可用SET设置为ON|OFF或1|0，特别是Bool类型的。
+
+
+#skip-grant-tables
+参数跳过验证，任何账号都可直接登录。
+
+#skip_networking
+拒绝一切TCP/IP连接，只能用named pipe/shared memory/socket file连接，用于不联网场景。
+
+#thread_cache_size 接线程池中用于复用的最大缓存个数
+#Threads_cached  缓存池当前的数量
+#Threads_created 总共新建的连接数
+#Connections     总共请求建立的连接数（成功+失败）
+#thread_stack    每个线程分配的堆栈空间，最小128KB，默认1MB
+
+#max_connections 最大同时连接数，默认151，对多应用来说，这个必须修改
+
+# innodb_file_per_table
+InnoDB表是否每个表单独一个ibd文件
+默认false，表都在系统表空间，可以内存复用，启动后放到单表空间，内存不复用，仅此而已。
+可用SET GLOBAL innodb_file_per_table 运行时修改
+也可用启动时命令行参数--innodb-file-per-table[={OFF|ON}]或配置文件指定

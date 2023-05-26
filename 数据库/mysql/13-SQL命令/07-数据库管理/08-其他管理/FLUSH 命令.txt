@@ -1,0 +1,48 @@
+触发器|函数不能使用flush，存储过程中可以用。
+
+刷新≈存盘，保存+关闭+重新读取
+
+FLUSH BINARY LOGS   会生成一个新日志
+FLUSH RELAY LOGS    会生成一个新日志
+FLUSH ERROR/GENERAL/SLOW LOGS 无副作用
+FLUSH LOGS 作用于一切日志 =
+    FLUSH BINARY LOGS
+   +FLUSH ENGINE LOGS
+   +FLUSH ERROR LOGS
+   +FLUSH GENERAL LOGS
+   +FLUSH RELAY LOGS
+   +FLUSH SLOW LOGS
+
+FLUSH PRIVILEGES 如果直接修改了权限表，需要用此命令存盘，并重新读取权限表。如果是GRANT/REVOKE修改的则不必刷新。
+
+flush前后自带隐式commit，确保当前连接的事务结束
+
+FLUSH TABLE = FLUSH TABLES 
+保存、写盘关闭、打开所有库表
+
+FLUSH TABLES tb1... 
+刷新指定表
+
+FLUSH TABLES tb1... WITH READ LOCK
+刷新并加表读锁，其实是获取表写锁，获取后刷新，刷新后加读锁
+这跟日志无关，锁住表不影响日志写入
+
+FLUSH TABLES WITH READ LOCK
+所有库所有表，刷新并加的全局读锁，而非表锁
+
+FLUSH TABLES tb1... FOR EXPORT
+若InnoDB库表有单独的.ibd文件，可用该命令导出。这个表必须是启动innodb_file_per_table时建立的，这样的ibd文件可以在系统运行时复制走。另外不能有全文索引。该命令还会生成table_name.cfg配置文件，与ibd文件放一起，用于导入数据。
+该命令阻塞直到获取表读锁，把所有未写出的数据都落盘，保持锁住以便导出。完成后，记得用UNLOCK TABLES|START TRANSACTION释放锁，或者用LOCK TABLES获取其他锁，否则会一直锁着。
+
+下面几个命令是冲突的，一个成功，其他的就无法再获取锁：
+FLUSH TABLES ... WITH READ LOCK
+FLUSH TABLES ... FOR EXPORT
+LOCK TABLES ... READ
+LOCK TABLES ... WRITE
+FLUSH TABLES WITH READ LOCK
+
+
+
+
+
+

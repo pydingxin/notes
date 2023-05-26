@@ -1,0 +1,2 @@
+专用于拷贝ibd文件：FLUSH TABLES tb1... FOR EXPORT
+见FLUSH命令
