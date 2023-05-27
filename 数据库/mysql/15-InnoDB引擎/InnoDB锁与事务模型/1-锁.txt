@@ -1,9 +1,0 @@
-共享锁Shared/S & 排他锁Exclusive/X
-这两种都是行锁
-T1对row1持有S时，T2可以立刻请求S，但不允许X
-T1持有X时，不允许其他事务对row1请求任何锁
-
-意向锁 IS意向共享锁 IX意向排他锁
-这两种都是表锁，一般用于ALTER TABLE
-命令LOCK TABLES ... WRITE|READ 即对表加IX|IS
-同时，获取表内S锁必须先获取整表的IS，获取表内X必须先获取整表IX

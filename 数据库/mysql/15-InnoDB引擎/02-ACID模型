@@ -1,0 +1,10 @@
+A-Atomacity     原子性
+undo log
+
+C-Consistency   一致性
+
+I-Isolation     隔离性
+加锁
+
+D-Durability    持久性
+redo log

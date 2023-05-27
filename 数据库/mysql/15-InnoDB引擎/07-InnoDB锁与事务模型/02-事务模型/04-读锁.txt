@@ -1,0 +1,8 @@
+在事务执行时，禁止其他事务update/delete某行，可对改行加读锁。
+select ... for share
+对读 取 到 的 所 有 行，加读锁(shared mode lock)，锁冲突时等待。
+
+注意：select ... for share = 
+select ... lock in share mode
+这两个等价，但前者更通用更强大
+
