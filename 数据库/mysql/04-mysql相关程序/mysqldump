@@ -55,7 +55,15 @@ options中有些有用的参数
 所有库的所有表加读锁
 
 --lock-tables
-dump某库时，只锁本库，释放其他库的读锁。可能有不一致的问题。
+dump某库时，只锁本库，释放其他库的读锁。
+这会导致库级别的不一致。
+
+--source-data[=value] after v8.0.26
+--master-data[=value] before v8.0.26
+在source上为replica做全量备份。
+value默认1,即在生成文件中写入CHANGE REPLICATION SOURCE|MASTER TO语句，若为2则注释该语句。
+自动开启--lock-all-tables，启动并保持全局读锁，直到手动释放，以保证数据一致性。
+若配合--single-transaction时，只在开始时锁住一会儿，数据一致性靠快照读实现。
 
 -----------------------------
 
@@ -71,6 +79,7 @@ dump某库时，只锁本库，释放其他库的读锁。可能有不一致的�
 
 --where
 只dump指定条件的行
+
 
 =========================================================
 例子

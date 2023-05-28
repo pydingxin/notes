@@ -1,4 +1,27 @@
-完整备份是某个时间点上全部数据的快照。
-把所有库中的所有InnoDB表做一个完整备份
-mysqldump --all-databases --master-data --single-transaction > backup.sql
-首先FLUSH TABLES WITH READ LOCK，等待所有事务执行完，把所有库表刷盘并加全局读锁，获取binlog坐标然后释放锁。
+用mysqldump对Innodb做某个时刻的全量备份：
+mysqldump --all-databases --master-data --single-transaction > backup_2023-01-01.sql
+
+--master-data
+首先FLUSH TABLES WITH READ LOCK，等待所有事务执行完，把所有库表刷盘并加全局读锁，获取binlog坐标然后释放锁，输出文件中会有设置binlog坐标的语句。
+
+--single-transaction
+mysqldump备份数据的参数，主要做了两件事：
+把隔离级别设置为REPEATABLE READ
+START TRANSACTION
+用快照读锁定数据，只对InnoDB表生效
+备份时不能对表alter/create/drop/rename/truncate
+对大表要同时使用--quick防止爆内存
+
+逻辑上--master-data的作用是存盘锁库，获得某个时刻状态。--single-transaction则在这个锁库的时刻启动快照读事务，屏蔽之后的数据改变。这样导出的数据就是某时刻的全量备份。
+
+==================================
+
+全量备份效率低，最好只做一次全量，后续都做增量备份。
+
+mysqldump --single-transaction --flush-logs --master-data=2 --all-databases > backup_2023-01-01.sql
+
+加一条flush-logs，在全量备份的同时，生成新的binlog文件binlog3，此次备份之后，将来再做的增量修改，都体现在binlog3中。下个月执行mysqladmin flush-logs，保存binlog3并生成binlog4，则binlog3就是这个月的增量变化。
+
+==================================
+可以同时把无用的二进制文件丢弃
+mysqldump --single-transaction --flush-logs --master-data=2 --all-databases --delete-master-logs > backup_2023-01-01.sql
