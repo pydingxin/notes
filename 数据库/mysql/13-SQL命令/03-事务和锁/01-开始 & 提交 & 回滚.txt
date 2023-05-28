@@ -1,0 +1,32 @@
+START TRANSACTION
+    [transaction_characteristic [, transaction_characteristic] ...]
+
+transaction_characteristic: {
+    WITH CONSISTENT SNAPSHOT
+  | READ WRITE
+  | READ ONLY
+}
+
+BEGIN [WORK]
+COMMIT [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
+ROLLBACK [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
+SET autocommit = {0 | 1}
+
+
+start transaction | begin
+开启事务，但begin不能指定参数
+
+commit
+提交当前事务，保存修改
+
+rollback
+取消当前事务，回滚修改
+
+SET autocommit = {0 | 1}
+设置当前事务的autocommit
+
+mysql默认开启autocommit，所有命令前后自动加start transaction & commit。手动start transaction时autocommit自动关闭，commit|rollback时又自动开启。
+
+
+
+

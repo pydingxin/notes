@@ -1,0 +1,17 @@
+在事务执行时加行锁，实现事务间隔离性
+
+select ... for share
+对读 取 到 的 所 有 行 加共享锁
+
+select ... for update
+对读 取 到 的 所 有 行 加排他锁
+
+注意：select ... for share = 
+select ... lock in share mode
+这两个等价，但前者更通用更强大
+
+必须关闭autocommit使用，（start transaction时自动关闭）锁冲突时等待，该事务commit 或 rollback 时加的锁自动释放（autocommit也自动开启）。
+
+不能用于嵌套查询，嵌套时各加各的
+SELECT * FROM t1 WHERE c1 = (SELECT c1 FROM t2 FOR UPDATE) FOR UPDATE;
+

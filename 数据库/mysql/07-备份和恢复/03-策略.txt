@@ -1,2 +1,7 @@
 当运行中的InnoDB表崩溃后，如果数据库还能跑起来，自动读取redolog，把commit但未存盘的事务存盘，读取undolog，把未commit的事务回滚，整个过程会记录在error log里。
 如果是文件系统或硬盘坏了，就要从异地备份里恢复，平时要做好备份。
+
+完整备份是某个时间点上全部数据的快照。
+把所有库中的所有InnoDB表做一个完整备份
+mysqldump --all-databases --master-data --single-transaction > backup.sql
+首先FLUSH TABLES WITH READ LOCK，等待所有事务执行完，把所有库表刷盘并加全局读锁，获取binlog坐标然后释放锁。

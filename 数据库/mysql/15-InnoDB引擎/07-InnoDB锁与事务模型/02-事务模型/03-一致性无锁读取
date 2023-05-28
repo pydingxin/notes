@@ -1,0 +1,14 @@
+一致性无锁读取又叫快照读，“读”即select，InnoDB的普通select默认就是快照读。快照读即事务看到的数据库，是创建事务时的数据库快照。不同事务创建各自的快照。
+
+快照读也只能用于select，不用于数据操纵语句（增删改）。A事务过程中若 B事务修改数据并commit，A不能看到这些数据，但A可以操纵这些被修改的数据，即A不能select却能update/delete。
+
+可用START TRANSACTION WITH CONSISTENT SNAPSHOT 创建一个使用快照读的事务A，A绑定到当前时间点T，后续A内的select看到的是T时刻的数据。
+
+这种机制叫多版本并发控制MVCC，允许事务不加锁并发访问数据。这也是mysql默认的并发方式，比加锁读有优势，提高了并发能力和效率。
+
+
+
+
+
+
+
