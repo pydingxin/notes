@@ -1,2 +1,13 @@
-专用于拷贝ibd文件：FLUSH TABLES tb1... FOR EXPORT
-见FLUSH命令
+
+冷备
+执行slow shutdown关闭服务器
+拷贝所有ibd ibdata ib_redoN ib_logfile文件
+
+热备
+mysqldump --single-transaction
+导出sql命令
+见7-3-1建立备份策略
+
+温备
+FLUSH TABLES tb1... FOR EXPORT
+锁住表直接拿走ibd/cnf文件，见FLUSH命令

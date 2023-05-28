@@ -31,8 +31,8 @@ FLUSH TABLES WITH READ LOCK
 所有库所有表，刷新并加的全局读锁，而非表锁
 
 FLUSH TABLES tb1... FOR EXPORT
-若InnoDB库表有单独的.ibd文件，可用该命令导出。这个表必须是启动innodb_file_per_table时建立的，这样的ibd文件可以在系统运行时复制走。另外不能有全文索引。该命令还会生成table_name.cfg配置文件，与ibd文件放一起，用于导入数据。
-该命令阻塞直到获取表读锁，把所有未写出的数据都落盘，保持锁住以便导出。完成后，记得用UNLOCK TABLES|START TRANSACTION释放锁，或者用LOCK TABLES获取其他锁，否则会一直锁着。
+若InnoDB库表有单独的.ibd文件，可用该命令导出。这个表必须是启动innodb_file_per_table时建立的，这样的ibd文 件 可 以 在 系 统 运 行 时 复 制。另外不能有全文索引。该命令还会生成table_name.cfg配置文件，与ibd文件放一起，用于导入数据。
+该命令阻塞直到获取表读锁，把所有未写出的数据都落盘，保持锁住以便复制文件。完成后，记得用UNLOCK TABLES|START TRANSACTION释放锁，或者用LOCK TABLES获取其他锁，否则会一直锁着。
 
 下面几个命令是冲突的，一个成功，其他的就无法再获取锁：
 FLUSH TABLES ... WITH READ LOCK

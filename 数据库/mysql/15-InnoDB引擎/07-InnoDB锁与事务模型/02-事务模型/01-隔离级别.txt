@@ -1,0 +1,10 @@
+事务隔离级别有4种：
+READ_UNCOMMITTED
+READ_COMMITTED 又名RC
+REPEATABLE_READ 又名RR，MySQL的默认级别
+SERIALIZABLE
+
+READ_UNCOMMITTED
+事务A能读到B未提交的修改，也叫脏读，因为B可能回滚，这种数据根本不应使用。
+
+
