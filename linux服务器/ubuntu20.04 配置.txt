@@ -65,3 +65,21 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
 【2】换源
 npm config set registry https://registry.npm.taobao.org/
+
+==============================================================================
+手动配置ip/DNS
+ubuntu的配置文件在/etc/netplan/下，文件名不确定
+    sudo nano /etc/netplan/00-installer-config.yaml
+编辑为：
+network:
+  version: 2
+  ethernets:
+    enp0s3:     #可能叫别的名字
+      dhcp4: no
+      addresses: [10.178.64.77/24] #ip和掩码
+      gateway4: 10.178.64.1         #网关
+      nameservers: 
+        addresses: [114.114.114.114, 223.5.5.5] #dns服务器地址
+注意缩进和空格非常严格
+然后 sudo netplan apply
+就可以了

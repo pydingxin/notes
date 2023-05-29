@@ -1,4 +1,29 @@
-服务器上默认开启--ssl，即允许客户端加密连接，但不强制。 
+服务端
+默认开启--ssl，即允许但不强制客户端使用加密连接。 但现在账号的登录验证方式默认为caching_sha2_password，不加密不能远程连接。
 
-关于强制见：Configuring Encrypted Connections as
-Mandatory.
+配置/etc/mysql/my.cnf加密信息：
+--------------------------
+[mysqld]
+ssl_ca=ca.pem
+ssl_cert=server-cert.pem
+ssl_key=server-key.pem
+--------------------------
+这3个文件都在datadir里，安装时就默认生成了。
+
+配置强制加密登录：
+require_secure_transport=ON
+
+==================================================
+客户端参数
+不使用--ssl-mode，先加密连，连不上就不加密再连
+--ssl-mode=DISABLED，不加密
+--ssl-mode=REQUIRED，加密
+--ssl-mode=VERIFY_CA 加密并验证CA
+--ssl-mode=VERIFY_IDENTITY 加密验证CA和host
+
+--ssl-ca 与服务器上的ca.pem必须是同一个文件
+--ssl-cert 客户端公钥 client-cert.pem
+--ssl-key 客户端私钥 client-key.pem
+
+命令：
+mysql --ssl-mode=REQUIRED --ssl-ca=./ca.pem --ssl-cert=./client-cert.pem --ssl-key=./client-key.pem -h 172.20.96.175 -u root -p
