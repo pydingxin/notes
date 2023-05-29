@@ -1,0 +1,16 @@
+server启动时依次读取3个配置文件：
+【1】my.cnf 手动配置
+【2】defaults-extra-file 用选项--defaults-extra-file指定的配置
+【3】mysqld-auto.cnf 用命令SET PERSIST|PERSIST_ONLY做的配置
+若启动时使用--no-defaults，则不使用配置。
+
+推荐统一用【1】，不用【2】【3】
+linux一般路径为/etc/my.cnf 或 /etc/mysql/my.cnf
+============================
+[mysqld]
+server-id=2
+
+[mysqldump]
+quick
+============================
+修改后重启服务即可 systemctl restart mysql

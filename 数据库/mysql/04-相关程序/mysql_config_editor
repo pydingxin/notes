@@ -1,4 +1,7 @@
-.mylogin.cnf是用户目录中的配置文件，保存mysql密码等登录信息，默认在用户目录
+.mylogin.cnf是用户目录中的配置文件，保存mysql密码等登录信息，默认在用户目录。所以每个操作系统账号要各自配置，root也不能用其他账号的配置。
+
+【window保存在%APPDATA%\MySQL\】
+
 可配置5种信息：host, user, password, port socket。例如
     [client]
     user = mydefaultname

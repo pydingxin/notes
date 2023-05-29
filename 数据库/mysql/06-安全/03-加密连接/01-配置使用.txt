@@ -1,0 +1,4 @@
+服务器上默认开启--ssl，即允许客户端加密连接，但不强制。 
+
+关于强制见：Configuring Encrypted Connections as
+Mandatory.
