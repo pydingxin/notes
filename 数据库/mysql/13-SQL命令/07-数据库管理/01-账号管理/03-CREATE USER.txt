@@ -1,0 +1,47 @@
+创建账号的选项很多，精简如下：
+CREATE USER [IF NOT EXISTS] user 
+    IDENTIFIED WITH auth_plugin by [pass_option]
+    DEFAULT ROLE role 
+    [WITH MAX_USER_CONNECTIONS count]
+    [ACCOUNT LOCK]
+    [ATTRIBUTE 'json_object']
+
+pass_option: {
+    'thepassword' | RANDOM PASSWORD
+}
+
+在mysql.user表中创建一行，创建后还要赋予权限和角色，不要用1条语句创建2个账号。
+
+指定最大连接数很有必要，一个gorm默认能开1000个连接，资源就没了，但这也限定了应用的最大并发数。
+
+关于验证方式，一个账号允许最多3种验证方式（auth_factor），auth_factor列记录了数目。
+
+【例1】
+user是username@host的形式，host=localhost只能本机登录，%可以异地登录
+    CREATE USER 'jeffrey'@'localhost' ...
+    CREATE USER 'jeffrey'@'%' ...
+
+【例2】
+    CREATE USER 'jeffrey'@'localhost' 
+        IDENTIFIED BY 'new_password' PASSWORD EXPIRE;
+可以用该密码登录，但进去不能执行命令，提示重设密码。
+
+【例3】
+    CREATE USER 'jeffrey'@'localhost'
+        IDENTIFIED WITH mysql_native_password BY 'new_password'
+        PASSWORD EXPIRE INTERVAL 180 DAY
+        FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;
+每180天密码重置密码，连续3次输错账号锁2天
+
+【例4】
+    CREATE USER 'tom'@'localhost' 
+        IDENTIFIED WITH caching_sha2_password BY RANDOM PASSWORD
+使用默认密码创建，创建后密码在列'generated password'中，只能看一次。
+
+【例5】
+attribute可以存账号的相关信息，非常有用，省得再建新表:
+    CREATE USER 'jim'@'localhost' ATTRIBUTE '{"fname": "James", "lname": "Scott", "phone": "4211087"}';
+以JSON的形式存在INFORMATION_SCHEMA.USER_ATTRIBUTES中:
+    SELECT USER,HOST,
+    CONCAT(ATTRIBUTE->>"$.fname"," ",ATTRIBUTE->>"$.lname") AS 'Full Name' 
+    FROM INFORMATION_SCHEMA.USER_ATTRIBUTES WHERE USER='bill';

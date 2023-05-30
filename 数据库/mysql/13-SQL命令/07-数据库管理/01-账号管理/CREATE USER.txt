@@ -1,3 +1,0 @@
-CREATE USER 创建账户，允许登录验证、角色、SSL/TLS、资源限制、密码管理、加锁解锁等。
-
-这个命令需要 CREATE USER 权限，当
