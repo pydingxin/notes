@@ -24,7 +24,8 @@ ALTER USER 'jeffrey'@'localhost'
   WITH MAX_QUERIES_PER_HOUR 500 MAX_UPDATES_PER_HOUR 100;
 
 【例5】
-密码策略。这些策略完全适用于等保要求，可以据此完善应用程序的登录模块。
+密码策略
+这些策略完全适用于等保要求，可以据此完善应用程序的登录模块。
 密码立刻过期
     ALTER USER 'jeffrey'@'localhost' PASSWORD EXPIRE;
 密码永不过期
@@ -36,3 +37,10 @@ ALTER USER 'jeffrey'@'localhost'
 输错4次锁住2天
     ALTER USER 'jeffrey'@'localhost'
         FAILED_LOGIN_ATTEMPTS 4 PASSWORD_LOCK_TIME 2;
+
+【例6】
+改账号属性
+    如 select attribute from INFORMATION_SCHEMA.USER_ATTRIBUTES WHERE USER='jim';
+    得 {"fname": "James", "lname": "Scott"}   
+    ALTER USER 'jim' ATTRIBUTE '{"fname": "dingxin"}';
+    得 {"fname": "dingxin", "lname": "Scott"}

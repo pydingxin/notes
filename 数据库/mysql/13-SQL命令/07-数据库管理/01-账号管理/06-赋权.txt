@@ -1,0 +1,57 @@
+
+==赋予权限=============================================
+create user可以创建账号，但不能给账号权限。
+必须再用grant给账号赋权，否则什么也干不了。
+
+【例】
+赋予单库权限，只能看到、操作db1
+    GRANT ALL ON db1.* TO jeff@localhost;
+
+【例】
+GRANT SELECT, INSERT ON *.* TO jeff;
+全局权限，包括库级、表级等所有低级别权限
+
+【例】
+通过赋权、除权达到特定效果
+GRANT SELECT, INSERT, UPDATE ON *.* TO u1;
+REVOKE INSERT, UPDATE ON db1.* FROM u1;
+对所有库都能增查改，但对db1只读
+
+---------------------------------------
+【tip】级别
+权限级别有:  全局*.*    库级db1.*    表级db1.tb1
+有的权限只有一个级别，有的权限横跨好几个级别
+比如shutdown是全局级。而create有全局级create database，库级create table 两种用法。
+有库级用法的权限，可以在库级指定。在库级赋予create权限，create只能用于库级及以下操作，不能创建新库
+
+【tip】全局级
+纯全局级权限必须用*.*指定
+正确：grant FILE on *.* to jim@localhost;
+错误：grant FILE on db1.* to jim@localhost;
+全局级权限包括： CREATE TABLESPACE, CREATE USER, FILE, PROCESS, RELOAD, REPLICATION CLIENT, REPLICATION SLAVE, SHOW DATABASES, SHUTDOWN, and SUPER
+
+【tip】库级
+db1.* 既表示（所赋权限的）库级（用法），也指出了具体指向（即db1）
+库级权限包括：CREATE, DROP, EVENT, GRANT OPTION, LOCK TABLES, and REFERENCES
+
+【tip】表级
+表级权限包括：ALTER, CREATE VIEW, CREATE, DELETE, DROP, GRANT OPTION, INDEX, INSERT, REFERENCES, SELECT, SHOW VIEW, TRIGGER, and UPDATE.
+
+【tip】列级
+GRANT SELECT (col1), INSERT (col1, col2) ON mydb.mytbl TO 'someuser'@'somehost';
+列级权限包括： INSERT, REFERENCES, SELECT, and UPDATE
+---------------------------------------
+
+【tip】
+存储过程和函数也能被赋权
+grant可以对不存在的库、表赋权，用于未来新建库表的场景。
+ALL [PRIVILEGES] 权限不包括 WITH GRANT OPTION (赋权)和 PROXY 这两个特殊权限，严格说这两个应该算风格配置。
+
+==赋予角色=============================================
+
+
+角色赋权
+    GRANT SELECT ON world.* TO 'role1';
+账号赋角色
+    GRANT 'role1' TO jeff@localhost;
+
