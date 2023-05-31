@@ -1,0 +1,37 @@
+revoke是grant的反向操作
+
+收回account|role的指定权限
+REVOKE INSERT ON *.* FROM jeff@localhost;
+REVOKE INSERT ON *.* FROM role1;
+普遍地讲，account/role都有host部分，若不指定，都是默认%
+
+收回account|role的所有级别权限：
+    REVOKE [IF EXISTS] ALL [PRIVILEGES], GRANT OPTION 
+        FROM user|role
+        [IGNORE UNKNOWN USER]
+这个 GRANT OPTION 不能省略
+
+收回account的role：
+    REVOKE [IF EXISTS] 'role1' 
+        FROM 'user1'@'localhost' 
+        [IGNORE UNKNOWN USER];
+解除角色关系，不影响role1和user1本身的权限
+
+-----------------------------------------------------
+【执行错误】
+执行revoke时，若account或role不存在，则执行错误，此时可用IGNORE UNKNOWN USER：
+    REVOKE SELECT ON test.t1 FROM jerry@localhost IGNORE UNKNOWN USER;
+此时会产生一个warning而不是error
+
+【执行错误】
+执行revoke时，若account和role都存在，但未曾grant此权限或角色，也会执行错误，此时可用IF EXISTS：
+    REVOKE IF EXISTS SELECT ON test.t1 FROM jerry@localhost;
+此时会产生一个warning而不是error
+
+【执行错误】
+同时使用IGNORE UNKNOWN USER 和 IF EXISTS，则没有任何执行错误：
+REVOKE IF EXISTS SELECT ON test.t1 FROM jerry@localhost IGNORE UNKNOWN USER;
+-----------------------------------------------------
+
+revoke和grants修改内存里的公用权限表，修改后其他账号立刻生效。
+用 SHOW GRANTS FOR user|role 查看所有grants

@@ -1,0 +1,5 @@
+SET DEFAULT ROLE
+    NONE | ALL | role1[,role2..]
+TO USER user1
+
+设置账号登录时的默认角色，这没必要，应当自动开启所有角色。

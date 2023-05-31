@@ -1,0 +1,27 @@
+set role 激活本账户在当前session中的角色
+账户使用的角色的权限 不影响 账户本身直接grant的权限
+
+当账号A成功连接服务器时，服务器要决定其角色，而角色意味着权限。如果开启了activate_all_roles_on_login（默认关闭），A所有角色都会开启；若未开启则使用默认角色。
+
+这个功能应该自动开启，在/etc/mysql/my.cnf里设置:
+    [mysqld]
+    activate_all_roles_on_login=ON
+sudo systemctl restart mysql重启服务即可
+账号登陆后自动启动所有角色。
+
+与之相对，直接赋给账号的权限不必设置什么激活，登录后直接就有。
+
+【0】SET ROLE NONE;
+不启动任何角色
+
+【1】SET ROLE DEFAULT;
+启动默认角色，账号的默认角色用SET DEFAULT ROLE设定
+
+【2】SET ROLE 'rol1'...;
+启动指定角色
+
+【3】SET ROLE ALL;
+启动所有角色
+
+【4】SET ROLE ALL EXCEPT 'rol1'...;
+启动除指定之外的所有角色

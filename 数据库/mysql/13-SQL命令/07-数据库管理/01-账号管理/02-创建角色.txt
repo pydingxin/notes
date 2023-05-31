@@ -1,0 +1,8 @@
+CREATE ROLE [IF NOT EXISTS] 'admin', 'developer';
+有原子性，要么全创建，要么全失败
+
+创建的角色默认未激活
+角色默认也有host部分，但要求角色从哪里登录没啥意义
+
+
+
