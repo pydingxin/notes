@@ -1,0 +1,4 @@
+DROP USER [IF EXISTS] user
+
+user必须带着host:
+drop user 'lily'@'localhost';

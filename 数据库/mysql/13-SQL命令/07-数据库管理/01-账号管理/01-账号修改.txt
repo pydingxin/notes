@@ -1,0 +1,38 @@
+查看当前账号
+select current_user();
+
+【例1】
+改密码，跟创建账户差不多，只是把create换成alter
+ALTER USER 'jeffrey'@'localhost' IDENTIFIED BY 'password';
+ALTER USER 'jeffrey'@'localhost' 
+    IDENTIFIED WITH mysql_native_password
+    BY 'password';
+
+【例2】
+加解锁
+ALTER USER 'jeffrey'@'localhost' ACCOUNT LOCK|UNLOCK;
+能锁住root，极危险，要完全删除并重装mysql
+
+【例3】
+改角色
+ALTER USER 'joe'@'10.0.0.1' 
+    DEFAULT ROLE administrator, developer;
+
+【例4】
+改资源
+ALTER USER 'jeffrey'@'localhost'
+  WITH MAX_QUERIES_PER_HOUR 500 MAX_UPDATES_PER_HOUR 100;
+
+【例5】
+密码策略。这些策略完全适用于等保要求，可以据此完善应用程序的登录模块。
+密码立刻过期
+    ALTER USER 'jeffrey'@'localhost' PASSWORD EXPIRE;
+密码永不过期
+    ALTER USER 'jeffrey'@'localhost' PASSWORD EXPIRE NEVER;
+密码180天过期一次
+    ALTER USER 'jeffrey'@'localhost' PASSWORD EXPIRE INTERVAL 180 DAY;
+重设时不能使用最近3次的密码
+    ALTER USER 'jeffrey'@'localhost' PASSWORD HISTORY 3;
+输错4次锁住2天
+    ALTER USER 'jeffrey'@'localhost'
+        FAILED_LOGIN_ATTEMPTS 4 PASSWORD_LOCK_TIME 2;
