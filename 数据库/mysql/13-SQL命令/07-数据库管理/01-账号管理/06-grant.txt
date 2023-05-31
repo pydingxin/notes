@@ -57,4 +57,4 @@ USAGE权限=无权限，只能登录。
 账号赋角色
     GRANT 'role1' TO jeff@localhost;
 
-revoke和grants修改内存里的公用权限表，修改后其他账号立刻生效。
+revoke和grants修改内存里的公用权限表，修改后其他账号立刻生效。也可以flush privileges;刷新

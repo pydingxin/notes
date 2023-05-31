@@ -33,5 +33,5 @@ REVOKE INSERT ON *.* FROM role1;
 REVOKE IF EXISTS SELECT ON test.t1 FROM jerry@localhost IGNORE UNKNOWN USER;
 -----------------------------------------------------
 
-revoke和grants修改内存里的公用权限表，修改后其他账号立刻生效。
+revoke和grants修改内存里的公用权限表，修改后其他账号立刻生效。也可以flush privileges;刷新
 用 SHOW GRANTS FOR user|role 查看所有grants
