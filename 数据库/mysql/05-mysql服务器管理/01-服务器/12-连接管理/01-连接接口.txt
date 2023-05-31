@@ -1,4 +1,11 @@
-mysql能监听多个网卡上的连接请求，有几个线程专门处理请求。
-mysql有客户端线程池，每个请求都分配一个线程，负责登录验证和请求处理。
-每个客户端线程都会消耗内存，要考虑资源限制。
+mysql能监听多个网卡上的连接请求，有几个线程专门监听端口。
 
+netstat -atnlp | grep 3306
+可看到处于lisnten状态的只有环回端口，因为mysql服务器默认不对外监听连接。要对外监听需使用bind_address参数，绑定要监听的网卡。
+设置/etc/mysql/my.cnf：
+    [mysqld]
+    bind_address=*
+然后systemctl restart mysql重启服务即可在本机所有网卡上监听连接。也可以设定具体网卡：
+    bind_address=198.51.100.20,10.178.64.17
+但不能把通配符和具体网卡混用：
+    错误：bind_address=198.51.100.20,*
