@@ -1,6 +1,6 @@
-GTID是基于事务的id，source_uuid:transaction_id，前者安装时自动生成，后者从1开始，最大值2&63-1，这个值很大。
+GTID即全局事务ID，source_uuid:transaction_id，前者安装时自动生成，后者从1开始，最大值2&63-1，这个值很大。
 
-主节点的事务写入binarylog，就自动生成一个gtid，保证连续无间断单调递增。如果是读操作等不写入binarylog的则没有gtid。从节点不修改GTID，即使从节点不保存binarylog，也会记录执行过的gtid，对重复的自动跳过不执行。
+主节点的事务写入binarylog，就自动生成一个gtid，保证连续无间断单调递增。如果是读操作等不写入binarylog的则没有gtid。从节点不修改GTID，即使从节点不开启binlog功能，也会记录执行过的gtid，对重复的自动跳过不执行。
 
 gtid集合是一组gtid，参数gtid_executed就是一个集合，连续的如：
 3E11FA47-71CA-11E1-9E33-C80AA9429562:1-5

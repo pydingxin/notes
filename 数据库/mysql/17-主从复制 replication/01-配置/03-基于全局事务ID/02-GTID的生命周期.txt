@@ -1,0 +1,13 @@
+一个全局事务的ID有以下周期：
+【1】主节点提交时@@gtid_executed←GTID，写binlog
+【2】主节点发送binlog，从节点接收并保存到relaylog
+【3】从relaylog不断取出命令，@@gtid_next←GTID，检查并执行
+【4】从节点提交时@@gtid_executed←GTID，写binlog
+
+主节点记录的提交事务主要是DDL & DML，但有些事务（比如涉及明文密码）会被剔除。此外函数、触发器、视图、用户、角色、grant、event等的增删改都会产生GTID，一个复杂命令可能产生多个GTID。
+
+主从节点的共性：事务提交时写@@gtid_executed和binlog，binlog滚动时才把GTID写入mysql.gtid_executed存档。若从节点禁用binlog则GTID实时存档。
+总之，一个服务器上执行过的GTID存为三份，考虑binlog的清理和禁用问题，可以说@@gtid_executed完整又实时，binlog实时不一定完整，mysql.gtid_executed完整不一定实时。
+
+==========================================
+本机上执行过的GTID都在@@gtid_executed，若其binlog被清理，就记入@@gtid_purged。有三种情况：从节点禁用binlog，则提交就等于被清理。手动清理binlog。手动设置@@gtid_purged。
