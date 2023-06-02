@@ -1,16 +1,52 @@
-server启动时依次读取3个配置文件：
+server有多种配置文件，如：
 【1】my.cnf 手动配置
 【2】defaults-extra-file 用选项--defaults-extra-file指定的配置
 【3】mysqld-auto.cnf 用命令SET PERSIST|PERSIST_ONLY做的配置
-若启动时使用--no-defaults，则不使用配置。
 
-推荐统一用【1】，不用【2】【3】
-linux一般路径为/etc/my.cnf 或 /etc/mysql/my.cnf
+mysql相关程序基本都能读配置文件，比如
+mysqladmin --help 显示mysqladmin依次读取三个配置文件/etc/my.cnf、/etc/mysql/my.cnf、~/my.cnf。
+mysqld --verbose --help 显示mysqld也读这三个文件。
+
+所以配置my.cnf基本就可以了，linux下路径应该是/etc/my.cnf 或 /etc/mysql/my.cnf
+
+若用命令行参数--no-defaults，则不读取配置文件。
+
 ============================
+my.cnf语法
+
+【注释】 #comment 
+【参数】用mysqld --verbose --help 查看所有命令行参数，这些参数都能在配置文件中指定。参数放在文件中时，去掉前缀两个横线，每个参数放一行，如命令行中--host=localhost在文件中为host=localhost
+如果有重复的，则下文配置覆盖前文配置。
+
+【配置组】 [group] 组名是程序的名字，作用域直到下一个配置组出现。
+[mysqld]是服务器mysqld的配置组
+[client]是客户端mysql公用的配置组，可以放账号密码
+[mysqldump]是备份工具mysqldump的配置组
+每种程序都只读取自己的配置组，比如mysqld只读取[mysqld]配置组，忽视[client]等配置组。
+
+--例子---------------------------
+[client]
+port=3306
+socket=/tmp/mysql.sock
+password="my password"
+
 [mysqld]
-server-id=2
+port=3306
+socket=/tmp/mysql.sock
 
 [mysqldump]
 quick
-============================
-修改后重启服务即可 systemctl restart mysql
+
+[mysqladmin]
+force
+-----------------------------
+
+不同版本mysqld参数不同，用配置组指定版本专用参数：
+[mysqld-8.0]
+sql_mode=TRADITIONAL
+该配置专用于mysqld程序的V8.0.x版本
+
+配置文件中还可以导入其他配置文件，导入单个.cnf文件：
+!include /home/mydir/myopt.cnf
+导入文件夹中所有.cnf文件：
+!include /home/mydir/

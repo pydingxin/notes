@@ -12,6 +12,7 @@
 
 不管有没有存量数据，此时存量状态已经同步完了，然后
 三、启动同步
-START REPLICA (or START SLAVE before 8.0.22)
 
 从节点的主从信息保存在mysql库中，不要直接编辑。
+
+ 

@@ -1,0 +1,15 @@
+【背景知识】receiver线程会更新库 PERFORMANCE_SCHEMA 中表replication_connection_status，存储所有收到的GTID等连接信息。
+
+【背景知识】每个binlog文件头都以 Previous_gtids_log_event 事件记录着上一个binlog文件的GTID集。
+
+GTID是自动挡，不需要手动定位source的binlog坐标。
+【1】主从节点都要用 GTID_MODE=ON 开启GTID功能。
+【2】从节点连接时用 SOURCE_AUTO_POSITION (after v8.0.23)参数开启自动定位。把收到+执行过的GTID集合发给主节点。
+【3】主节点从最近的binlog文件向前找，根据binlog头的GTID集合判定，定位到某个binlog开始发送。
+
+【错误】若主节点发现有些未发送的binlog被清理了，则向从节点发送错误 ER_MASTER_HAS_PURGED_REQUIRED_GTIDS，停止同步。并向自己的错误日志中写入错误 ER_FOUND_MISSING_GTIDS + 所有丢失的GTID。解决该问题要从其他主/从节点搞到这些日志。
+
+【错误】若主节点给事务A分配了GTIDX，执行后日志未存盘时宕机，但已发送给从节点。主节点重启后，则检查从节点发来的GTID，发现但自己丢失了GTIDX，则发送错误ER_SLAVE_HAS_MORE_GTIDS_THAN_MASTER，停止同步。此时主节点很可能把GTIDX给了另一个事务B。这需要手动解决。
+
+
+

@@ -1,0 +1,31 @@
+binlog是二进制，用便于传输
+【例】
+# at 234
+#230602  4:08:26 server id 1  end_log_pos 348 CRC32 0x68c9e090  Query  thread_id=12  exec_time=0  error_code=0  Xid = 681
+...
+create database master
+# at 348
+...
+
+at 234 指234位置有一条记录
+230602即2023-06-02
+end_log_pos是下一条的位置
+exec_time=0，在主节点时执行时间，在从节点上=从节点执行结束时间-主节点执行开始时间
+__________________________________________________________________
+mysqlbinlog有两个功能，一是查看，二是远程备份。
+查看时能指定时间区间、位置区间等，详见文档。
+
+【例-查看】查看内容：
+    mysqlbinlog binlog.000001
+但不能直接看加密日志
+
+【例-查看】输出的内容能直接执行：
+    mysqlbinlog binlog.000001 binlog.000002| mysql
+所以直接拿binlog去备份数据也是可以的。
+
+【例-查看】管道：
+gzip -cd binlog-files_1.gz binlog-files_2.gz | mysqlbinlog | mysql 
+
+【例-查看】查看远程服务器上的binlog：
+mysqlbinlog -h 10.178.64.88 -P 3306 --protocol=TCP -u dingxin1 -p -R binlog.000001
+

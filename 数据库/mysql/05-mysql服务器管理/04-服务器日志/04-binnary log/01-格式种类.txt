@@ -1,0 +1,7 @@
+binlog有三种记录方式：
+【1】statement-based 记录SQL命令
+【2】row-based 记录事件，这是默认格式
+【3】mixed 默认为【1】，特定情况下自动使用【2】
+分别用--binlog-format= STATEMENT| ROW| MIXED开启
+
+存储引擎也可以自主设置记录方式，特别是在不同引擎见主从复制时。

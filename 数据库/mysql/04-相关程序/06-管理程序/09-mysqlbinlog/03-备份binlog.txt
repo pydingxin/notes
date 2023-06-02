@@ -1,0 +1,19 @@
+mysqlbinlog能远程备份binlog。可先远程登录，用 SHOW BINARY LOGS 看所有binlog
+
+【例-远程备份】指定binlog，远程下载到当前文件夹，用--raw：
+mysqlbinlog -h 10.178.64.88 -P 3306 --protocol=TCP -u dingxin1 -p --raw -R binlog.000001 binlog.000002 
+该user需要REPLICATION SLAVE权限
+
+【例-远程备份】指定binlog，远程下载所有后续binlog到当前文件夹，用--to-last-log：
+mysqlbinlog -h 10.178.64.88 -P 3306 --protocol=TCP -u dingxin1 -p --raw --to-last-log -R binlog.000003 
+
+【例-远程备份】
+用--result-file=88 指定备份文件的前缀88
+用--result-file=/tmp/88 指定备份文件的文件夹 和 前缀88
+
+【例-远程备份】
+像主从同步一样在线流式备份，用--stop-never，当前命令会持续监听：
+mysqlbinlog -h 10.178.64.88 -P 3306 --protocol=TCP -u dingxin1 -p --raw --to-last-log --stop-never -R binlog.000003 
+如果服务器flush logs，可以发现确实出现一个新文件。
+这省去了配置主从同步的麻烦，但不能像真正的主从一样断线自动重连。
+但不失为一个办法。
