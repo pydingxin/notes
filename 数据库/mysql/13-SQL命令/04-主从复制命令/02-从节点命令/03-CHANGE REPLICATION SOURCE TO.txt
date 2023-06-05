@@ -9,8 +9,9 @@ CHANGE REPLICATION SOURCE TO SOURCE_HOST='10.178.64.88', SOURCE_PORT=3306,  SOUR
 start replica;
 
 另一种基于mysqldump的启动：
-mysqldump -h 10.178.64.88 -P 3306 --protocol=TCP -u dingxin1 -p --single-transaction --source-data=1 --all-databases --result-file try.sql
-在try.sql中修改CHANGE REPLICATION SOURCE TO 语句，加上
-start replica;
-SET GLOBAL server_id = 2; 
-执行该文件，直接就能开启同步。
+mysqldump -h 10.178.64.88 -P 3306 --protocol=TCP -u dingxin1 -p --single-transaction --source-data=2 --all-databases --result-file try.sql
+在try.sql中修改CHANGE REPLICATION SOURCE TO 语句，文件结尾加上
+SET GLOBAL server_id = 2; start replica;
+执行该文件，就能开启同步。
+
+mysqldump也很智能：如果有binlog，就默认使用--no-date并设置好位置；如果binlog被清理了，就把插入语句写入结果里。
