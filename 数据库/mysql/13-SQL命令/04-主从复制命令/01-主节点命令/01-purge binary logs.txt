@@ -1,0 +1,25 @@
+PURGE BINARY|MASTER LOGS {
+    TO 'log_name'
+  | BEFORE datetime_expr
+}
+
+删除符合条件的binlog。
+删除以日志为单位，不会删除日志中的部分内容。
+
+【例】PURGE BINARY LOGS TO 'mysql-bin.010';
+删除mysql-bin.010之前的所有binlog，mysql-bin.010及其之后的不动
+
+【例】PURGE BINARY LOGS BEFORE '2019-04-02 22:46:26';
+设此时间点出现在logA中，则logA之前的日志会删除，logA及其之后的不会动。
+
+
+若从节点A需要读取logA及之后的日志，主节点能否删除logA：
+若A是连接状态，主节点知道不能删除，命令失败返回警告。
+若A是断开状态，则可以删除，删除后A重连会发现错误。
+
+推荐的删除流程：在所有从节点show replica status看看都在读哪些日志；在主节点show binary logs看看都有哪些；找到能安全删除的日志，备份日志然后删除。可以在从节点运行时使用。
+
+
+若日志是被操作系统rm删除的，则修改日志索引保持一致。
+
+日志最长保存时间为 binlog_expire_logs_seconds，默认是30天。

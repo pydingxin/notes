@@ -1,0 +1,4 @@
+START REPLICA
+开启从节点的同步线程，开始同步工作。
+
+该命令正常不代表同步正常，要show replica status查看进行情况

@@ -1,0 +1,8 @@
+RESET MASTER;
+
+重置主节点，删除所有binlog，生成一个新的空binlog.000001。
+若开启了GTID模式，则清空历史，@@gtid_executed 和 @@gtid_purged 置为空串，清空mysql.gtid_executed 
+
+与purge binary logs不同，reset master不能在从节点运行时使用，后果未知。
+
+一个简单的停止过程是：从节点STOP REPLICA;RESET REPLICA;然后主节点RESET MASTER。

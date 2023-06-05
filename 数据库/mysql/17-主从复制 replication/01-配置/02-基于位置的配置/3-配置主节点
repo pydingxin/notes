@@ -1,8 +1,9 @@
 serverid 需要设置为[1, 2^32-1]：
-SET GLOBAL server_id = 2;
 从v8.0开始serverid默认为1，以前是0
+SET GLOBAL server_id = 2;
+但不要用命令设置，若从节点之前为1，则日志中自己之前的id和当前主节点id都是1，混在一起就分不出来了。
 
 若设置前serverid为0，修改后要重启。
 若binarylog之前未开启，开启后要重启。
 
-source不能开启skip_networking。
+

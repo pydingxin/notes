@@ -1,0 +1,5 @@
+SET sql_log_bin = {OFF|ON}
+让当前session的操作不写入binlog。
+若主节点有些命令不想传给从节点，可用此法，不能在事务和子查询内部使用。
+
+在GTID模式下会导致当前binlog不能再写入GTID，所以别乱用。

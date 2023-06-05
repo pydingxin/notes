@@ -1,0 +1,10 @@
+CHANGE REPLICATION SOURCE TO 
+在从节点设置连接信息，但只设置信息，不启动线程。
+
+一个基于位置的从节点启动：
+SET GLOBAL server_id = 2;
+stop replica;
+reset replica all;
+CHANGE REPLICATION SOURCE TO SOURCE_HOST='10.178.64.88', SOURCE_PORT=3306,  SOURCE_USER='dingxin1',  SOURCE_PASSWORD='dingxin1',  SOURCE_LOG_FILE='binlog.000001',  SOURCE_LOG_POS=4;
+start replica;
+

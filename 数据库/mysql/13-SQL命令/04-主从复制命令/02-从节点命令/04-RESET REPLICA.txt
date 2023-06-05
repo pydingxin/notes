@@ -1,0 +1,13 @@
+RESET REPLICA [ALL]
+
+RESET REPLICA 清空从节点同步信息，删除主节点的log位置、所有（包括未执行的）relay log，新建空白relaylog。
+
+此命令在GTID模式下不改变gtid_executed、gtid_purged、mysql.gtid_executed，若要清空这些信息，用reset MASTER，即使当前是从节点。
+
+因为relaylog被占用，此命令需要先用stop replica停止从节点的线程。
+
+RESET REPLICA不清除连接信息，如主节点ip port user之类，只清除同步信息。
+要把主从信息彻底清除，用reset replica all.
+
+
+
