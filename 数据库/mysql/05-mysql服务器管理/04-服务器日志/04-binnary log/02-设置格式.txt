@@ -4,5 +4,4 @@
 --log_bin
 
 @@log_bin=ON|OFF binlog的开关，v8.0之后才默认开启，开启时默认@@log_bin_basename='binlog'，
---log-bin[=base_name]
-host_name-bin
+

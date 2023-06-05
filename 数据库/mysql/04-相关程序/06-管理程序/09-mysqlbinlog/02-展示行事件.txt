@@ -1,0 +1,14 @@
+binlog常用的有三种行事件：
+WRITE_ROWS_EVENT （增）日志中写为Write_rows
+UPDATE_ROWS_EVENT（改）日志中写为Update_rows
+DELETE_ROWS_EVENT（删）日志中写为Delete_rows
+
+输出默认是base64字符串，看不见命令，用--verbose|-v展示真实命令：
+mysqlbinlog -v binlog.000001
+
+用-vv 还能展示一些元信息，默认输出有很多无用的系统注释信息，用--base64-output=DECODE-ROWS删除之。综上，同时使用这两个参数，就能方便查看日志：
+mysqlbinlog --verbose --base64-output=DECODE-ROWS binlog.000001
+
+然后在日志中通过Write_rows|Update_rows|Delete_rows就能找到各种历史操作。
+
+日志默认row-based格式，记录改编的命令，而非用户使用的原命令，比如会把列名改为@N等。

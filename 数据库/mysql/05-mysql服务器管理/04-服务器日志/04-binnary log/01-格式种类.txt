@@ -1,7 +1,29 @@
 binlog有三种记录方式：
-【1】statement-based 记录SQL命令
-【2】row-based 记录事件，这是默认格式
-【3】mixed 默认为【1】，特定情况下自动使用【2】
+【1】statement-based 记录SQL命令，日志文件小。比如删除命令：
+delete from pet where owner='jim';
+会原样写进日志。
+
+【2】row-based 记录事件，这是默认格式。
+把所有变化的行都单独记录，一行一条命令，比如上述命令会被记录为：
+### DELETE FROM `test`.`pet`
+### WHERE
+###   @1=1
+###   @2='pet1'
+###   @3=1
+###   @4='jim'
+### DELETE FROM `test`.`pet`
+### WHERE
+###   @1=2
+###   @2='pet2'
+###   @3=3
+###   @4='jim'
+日志当然会膨胀很多。但更安全，删除的数据整行都会被记录。
+也更精确，特别是配合id，能避免很多问题。
+
+【3】mixed 自动切换，默认为【1】，特定情况下自动使用【2】
 分别用--binlog-format= STATEMENT| ROW| MIXED开启
 
-存储引擎也可以自主设置记录方式，特别是在不同引擎见主从复制时。
+【存储引擎也可以自主设置记录方式，特别是在不同引擎主从复制时】
+
+
+
