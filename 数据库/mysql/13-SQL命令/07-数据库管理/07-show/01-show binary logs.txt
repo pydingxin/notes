@@ -1,0 +1,2 @@
+show binary logs = show master logs
+展示本server所有binlog日志

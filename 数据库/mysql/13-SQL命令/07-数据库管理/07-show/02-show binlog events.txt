@@ -1,0 +1,18 @@
+SHOW BINLOG EVENTS
+   [IN 'log_name']
+   [FROM pos]
+   [LIMIT row_count]
+
+展示一个binlog文件中的事件，from指定开始pos，limit限定行数。
+binlog越大越费时间。
+
+show binlog events in 'binlog.000011';
++---------------+------+----------------+-----------+-------------+--------------------------------------+
+| Log_name      | Pos  | Event_type     | Server_id | End_log_pos | Info                                 |
++---------------+------+----------------+-----------+-------------+--------------------------------------+
+| binlog.000016 | 3000 | Xid            |         1 |        3031 | COMMIT /* xid=57 */                  |
+| binlog.000016 | 3031 | Anonymous_Gtid |         1 |        3110 | SET @@SESSION.GTID_NEXT= 'ANONYMOUS' |
+| binlog.000016 | 3110 | Query          |         1 |        3185 | BEGIN                                |
+| binlog.000016 | 3185 | Table_map      |         1 |        3246 | table_id: 130 (test.pet)             |
+| binlog.000016 | 3246 | Write_rows     |         1 |        3299 | table_id: 130 flags: STMT_END_F      |
++---------------+------+----------------+-----------+-------------+--------------------------------------+

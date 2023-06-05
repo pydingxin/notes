@@ -1,0 +1,2 @@
+SHOW REPLICA STATUS\G;
+展示主从连接的状态。
