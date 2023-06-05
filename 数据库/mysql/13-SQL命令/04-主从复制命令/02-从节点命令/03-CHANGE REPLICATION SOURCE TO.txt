@@ -2,9 +2,15 @@ CHANGE REPLICATION SOURCE TO
 在从节点设置连接信息，但只设置信息，不启动线程。
 
 一个基于位置的从节点启动：
-SET GLOBAL server_id = 2;
+SET GLOBAL server_id = 2; #正常应用配置文件修改
 stop replica;
 reset replica all;
-CHANGE REPLICATION SOURCE TO SOURCE_HOST='10.178.64.88', SOURCE_PORT=3306,  SOURCE_USER='dingxin1',  SOURCE_PASSWORD='dingxin1',  SOURCE_LOG_FILE='binlog.000001',  SOURCE_LOG_POS=4;
+CHANGE REPLICATION SOURCE TO SOURCE_HOST='10.178.64.88', SOURCE_PORT=3306,  SOURCE_USER='dingxin1',  SOURCE_PASSWORD='dingxin1',  SOURCE_LOG_FILE='binlog.000001',  SOURCE_LOG_POS=447;
 start replica;
 
+另一种基于mysqldump的启动：
+mysqldump -h 10.178.64.88 -P 3306 --protocol=TCP -u dingxin1 -p --single-transaction --source-data=1 --all-databases --result-file try.sql
+在try.sql中修改CHANGE REPLICATION SOURCE TO 语句，加上
+start replica;
+SET GLOBAL server_id = 2; 
+执行该文件，直接就能开启同步。

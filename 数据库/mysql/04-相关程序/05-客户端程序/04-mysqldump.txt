@@ -22,7 +22,7 @@ options中有些有用的参数
 
 -----------------------------
 --bind-address
-如果有多个网卡，指定一个来连接服务器
+如果本机有多个网址，指定一个来连接服务器
 
 --host
 --port
@@ -89,7 +89,5 @@ mysqldump dbname > backup.sql
 mysql dbname < backup.sql
 可以看到backup.sql有建表、插入数据的语句，但没有建库的语句，所以恢复时dbname应该已经存在。
 其实这已经够用了，每个库本就应该分开备份。
-
-
 
 
