@@ -1,0 +1,10 @@
+只读模式备份不必关机
+
+FLUSH TABLES WITH READ LOCK;
+SET GLOBAL read_only = ON;
+
+这会停止IO线程写relaylog，此时可备份文件
+
+SET GLOBAL read_only = OFF;
+UNLOCK TABLES;
+节点恢复工作

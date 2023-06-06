@@ -1,1 +1,3 @@
 从节点可以选择性同步主节点的数据
+
+CHANGE REPLICATION FILTER REPLICATE_DO_DB 创建过滤规则，

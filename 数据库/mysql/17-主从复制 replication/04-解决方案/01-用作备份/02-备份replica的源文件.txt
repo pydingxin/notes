@@ -1,0 +1,6 @@
+备份replica的方式，一是mysqldump，二是拷贝源文件，但前者只适用于小库，不如统一用后者。
+
+停机，打包整个datadir，再开机
+mysqladmin shutdown
+tar cf ./2023-01-01-dbbackup.tar  /var/lib/mysql
+systemctl start mysql
