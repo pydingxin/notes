@@ -13,5 +13,7 @@ mysqldump -h 10.178.64.88 -P 3306 --protocol=TCP -u dingxin1 -p --single-transac
 在try.sql中修改CHANGE REPLICATION SOURCE TO 语句，文件结尾加上
 SET GLOBAL server_id = 2; start replica;
 执行该文件，就能开启同步。
+但这种全库同步会导致从节点账号都被同步掉，当时不会生效，但从节点重启后要用主节点的账号登录。
 
 mysqldump也很智能：如果有binlog，就默认使用--no-date并设置好位置；如果binlog被清理了，就把插入语句写入结果里。
+

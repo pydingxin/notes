@@ -1,0 +1,31 @@
+
+    查看主从同步状态的办法
+
+=====================================================
+
+从节点用show replica status\G; 检查主从同步状态。其中：
+ Replica_IO_Running 为IO(receiver)线程状态
+ Source_Log_File & Read_Source_Log_Pos 是IO线程当前读取到的主节点的位置
+
+ Replica_SQL_Running 为SQL(applier)线程状态
+ Relay_Source_Log_File & Exec_Source_Log_Pos 是SQL线程当前执行到的主节点binlog位置
+ Relay_Log_File & Relay_Log_Pos 是SQL线程当前执行到的从节点relaylog位置
+
+ Seconds_Behind_Source 为从节点落后主节点的秒数
+ 
+=====================================================
+
+如果没有日志可传输，主节点会发给从节点心跳信息，一般半分钟一次心跳。
+存在从节点replication_connection_status表中。只有一行数据：
+select * from performance_schema.replication_connection_status\G;
+
+=====================================================
+
+从节点查看进程 SHOW PROCESSLIST \G;
+IO线程的状态一般是  Waiting for source to send event
+SQL线程的状态一般是 Replica has read all relay log; waiting for more updates
+
+=====================================================
+
+主节点运行 SHOW REPLICAS; 可以看到从节点的 Server_Id 和 Replica_UUID
+从节点用 select @@server_id, @@server_uuid; 也可以查看自身id、uuid

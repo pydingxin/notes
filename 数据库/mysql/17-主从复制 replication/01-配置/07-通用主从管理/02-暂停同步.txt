@@ -1,0 +1,9 @@
+从节点用 stop replica; 停止 IO 和 SQL 线程
+用 start replica 启动两线程
+
+也可以分别停止和启动：
+stop  replica io_thread;
+start replica io_thread;
+
+stop  replica sql_thread;
+start replica sql_thread;

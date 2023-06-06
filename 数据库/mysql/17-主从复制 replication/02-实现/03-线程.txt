@@ -3,5 +3,5 @@
 2.从节点receiver线程，START REPLICA命令启动该线程，连接主节点，接收日志并保存到relaylog。
 3.从节点applier线程读取relaylog并执行，v8.0.26后从节点默认有4个并行工作的applier线程。
 
-主节点若有n个从节点，就有n个dump线程。
+每个receiver来连接，主节点就会新建一个dump线程。
 

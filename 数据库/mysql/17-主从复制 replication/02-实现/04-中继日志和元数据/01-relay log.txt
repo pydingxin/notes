@@ -1,0 +1,8 @@
+有多个日志文件，名字为 hostname-relay-bin.00000N
+有一个索引文件，名字为 hostname-relay-bin.index
+
+文件名字和路径都能用系统变量 relay_log & elay_log_index 修改。如果不修改，改变宿主机名字会导致relaylog无法打开。
+
+日志文件就是复制的 binlog，可用mysqlbinlog查看。
+
+每当IO线程重启，日志滚动或刷新，从节点创都会建新的relaylog文件，SQL线程会择机自动删除无用日志。

@@ -1,0 +1,8 @@
+从节点有两个元数据库：
+connection metadata repository
+即表mysql.slave_master_info，记录主节点的信息，包括密码
+
+applier metadata repository
+即表 mysql.slave_relay_log_info，记录日志传输情况
+
+这两个表不可手动修改。若把从节点拷贝到另一个机子上作新的从节点，这些信息都是必需的。
