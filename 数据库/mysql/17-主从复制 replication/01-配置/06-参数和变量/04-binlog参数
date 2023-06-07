@@ -1,0 +1,2 @@
+--log-replica-updates[={OFF|ON}]
+默认开启。从节点执行完主节点的事件，是否写入自己的binlog。这在链式传输中是必须的。

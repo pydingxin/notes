@@ -1,0 +1,11 @@
+保持简单，不要用非必要的功能和设置
+
+--skip-replica-start
+启动从节点时不开启IO/SQL进程
+
+--init-replica='..'
+(≥8.0.26)replica的SQL进程启动时执行字符串中的命令
+
+--replica-preserve-commit-order[={OFF|ON}]
+(≥8.0.27)默认开启，使多个applier线程按log中顺序提交。
+

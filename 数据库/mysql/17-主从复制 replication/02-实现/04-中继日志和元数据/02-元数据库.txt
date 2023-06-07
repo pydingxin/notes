@@ -3,6 +3,13 @@ connection metadata repository
 即表mysql.slave_master_info，记录主节点的信息，包括密码
 
 applier metadata repository
-即表 mysql.slave_relay_log_info，记录日志传输情况
+即表 mysql.slave_relay_log_info，记录日志传输情况，例：
+Relay_log_name: ./dingxin2-relay-bin.000005
+Relay_log_pos: 897
+Master_log_name: binlog.000004
+Master_log_pos: 1018
+这个意思是主节点上下一次写入的位置是 binlog.000004-1018
+从节点下次写入的位置是 dingxin2-relay-bin.000005-897
+但这两个位置现在还没写入。
 
-这两个表不可手动修改。若把从节点拷贝到另一个机子上作新的从节点，这些信息都是必需的。
+这两个表不可手动修改。若把从节点拷贝到另一个机子上作新的从节点，这些信息都是必需的。重设主节点，要用reset replica all清空这两个表，清空才能重新写入。
