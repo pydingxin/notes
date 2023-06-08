@@ -4,6 +4,9 @@ ubuntu的root默认是不开启，用sudo passwd为root设置密码，启用root
 
 Ubuntu默认有一个中国源，可以换一个更快的
 
+先看自己的系统版本和名字 lsb_release -a
+比如都是ubuntu22.04，但focal和jammy就不是一回事
+
 ==============================================================================
 安装caddy
 在虚拟机中按照caddy官网文档安装，发现dl.cloudsmith.io无法访问。
